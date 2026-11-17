@@ -2,6 +2,8 @@
 
 Machine: Windows 11, Node 24.18, Ollama 0.40.16 with `qwen2.5:3b` (CPU, AMD Radeon 820M). Branch `task/universal-ai-assistant`.
 
+**Final re-run after all fixes (code of commit `f6a1f04`):** typecheck 0 errors · ESLint 0 problems · Prettier clean · 232/232 unit/integration · production build without warnings · Playwright 23/23. The real-inference results below were produced on the same code.
+
 | Check                                                                                      | Result           | Evidence                                                                                                                                                                                                               |
 | ------------------------------------------------------------------------------------------ | ---------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | TypeScript typecheck                                                                       | PASS             | 0 errors                                                                                                                                                                                                               |
