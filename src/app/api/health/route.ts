@@ -1,6 +1,7 @@
 import { sql } from "drizzle-orm";
 import { ok } from "@/lib/api/server";
 import { db } from "@/server/db";
+import { logger } from "@/server/logger";
 
 /** GET /api/health — liveness + database connectivity. Used by deploy checks. */
 export const dynamic = "force-dynamic";
@@ -10,7 +11,7 @@ export async function GET() {
   try {
     await db.run(sql`select 1`);
   } catch (error) {
-    console.error("[health] database check failed:", error);
+    logger.error("health check: database unreachable", { error });
     database = "error";
   }
   return ok(

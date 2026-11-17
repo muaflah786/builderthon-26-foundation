@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { AppError, isAppError } from "@/lib/errors";
 import type { ApiFailure, ApiSuccess, PageMeta } from "@/lib/api/types";
+import { logger } from "@/server/logger";
 
 /**
  * Route-handler helpers. Usage (src/app/api/<resource>/route.ts):
@@ -52,7 +53,7 @@ export function toErrorResponse(error: unknown) {
   if (error instanceof z.ZodError) {
     return errorResponse(AppError.validation(z.flattenError(error).fieldErrors));
   }
-  console.error("[api] Unhandled error:", error);
+  logger.error("unhandled API error", { error });
   return errorResponse(new AppError("INTERNAL_ERROR", "Something went wrong"));
 }
 
