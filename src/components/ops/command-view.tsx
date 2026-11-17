@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { AutoRefresh, IssueButtons } from "@/components/ops/actions";
+import { Icon } from "@/components/ops/icons";
 import { Badge } from "@/components/ui/badge";
 import { buttonClasses } from "@/components/ui/button";
 import { canClose } from "@/lib/ops/permissions";
@@ -34,7 +35,7 @@ export function CommandView({ data, renderedAt }: { data: CommandData; renderedA
           <p className="text-muted-foreground text-sm">
             Command centre · {config.roleLabels[data.member.level]}
           </p>
-          <h1 className="text-2xl font-semibold tracking-tight">{data.operation.name}</h1>
+          <h1 className="text-3xl font-extrabold tracking-tight">{data.operation.name}</h1>
           <p className="text-muted-foreground text-xs">
             Updated {time(renderedAt)} · refreshes every 15 seconds
           </p>
@@ -83,16 +84,13 @@ export function CommandView({ data, renderedAt }: { data: CommandData; renderedA
       {!live ? (
         <p className="bg-muted rounded-lg p-4 text-sm">
           This operation is closed. Nothing can be changed.{" "}
-          <Link href={`/app/ops/${data.operation.id}/summary`} className="text-primary underline">
+          <Link href={`/app/ops/${data.operation.id}/summary`} className="text-brand underline">
             See the summary
           </Link>
         </p>
       ) : null}
 
-      <section
-        aria-labelledby="numbers"
-        className="border-border bg-border grid grid-cols-2 gap-px overflow-hidden rounded-lg border sm:grid-cols-4"
-      >
+      <section aria-labelledby="numbers" className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         <h2 id="numbers" className="sr-only">
           Progress
         </h2>
@@ -100,22 +98,41 @@ export function CommandView({ data, renderedAt }: { data: CommandData; renderedA
           {
             label: `${terms.tasks} done`,
             value: `${data.counts.done} / ${data.counts.total}`,
-            note: `${percent}%`,
+            note: `${percent}% complete`,
+            icon: "check" as const,
           },
-          { label: "In progress", value: data.counts.inProgress },
-          { label: "Late", value: data.counts.delayed, alert: data.counts.delayed > 0 },
+          { label: "In progress", value: data.counts.inProgress, icon: "bolt" as const },
+          {
+            label: "Late",
+            value: data.counts.delayed,
+            alert: data.counts.delayed > 0,
+            icon: "calendar" as const,
+          },
           {
             label: `Open ${terms.issues.toLowerCase()}`,
             value: data.counts.openIssues,
             alert: data.attention.urgent_issues.count > 0,
+            icon: "alert" as const,
           },
         ].map((s) => (
-          <div key={s.label} className="bg-background p-4">
-            <p className="text-muted-foreground text-sm">{s.label}</p>
-            <p className={`text-2xl font-semibold tabular-nums ${s.alert ? "text-danger" : ""}`}>
-              {s.value}
-            </p>
-            {s.note ? <p className="text-muted-foreground text-xs">{s.note}</p> : null}
+          <div
+            key={s.label}
+            className="border-border bg-background flex items-center gap-4 rounded-2xl border p-4 shadow-sm"
+          >
+            <span
+              className={`grid size-12 shrink-0 place-items-center rounded-full ${s.alert ? "bg-danger/10 text-danger" : "bg-brand-soft text-brand"}`}
+            >
+              <Icon name={s.icon} className="size-6" />
+            </span>
+            <div className="min-w-0">
+              <p className={`text-2xl font-extrabold tabular-nums ${s.alert ? "text-danger" : ""}`}>
+                {s.value}
+              </p>
+              <p className="text-muted-foreground truncate text-sm">{s.label}</p>
+              {"note" in s && s.note ? (
+                <p className="text-muted-foreground text-xs">{s.note}</p>
+              ) : null}
+            </div>
           </div>
         ))}
       </section>

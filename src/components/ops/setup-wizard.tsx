@@ -8,11 +8,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Icon, type IconName } from "@/components/ops/icons";
 import { apiFetch, ApiClientError } from "@/lib/api/client";
+import { cn } from "@/lib/utils";
 import type { SetupDraft, SetupSuggestion } from "@/lib/ops/setup";
 import { PERMISSION_LEVELS } from "@/lib/ops/types";
 
-type Choice = { id: string; name: string; example: string };
+type Choice = { id: string; name: string; example: string; icon: IconName };
 
 function toIso(local: string) {
   if (!local) return undefined;
@@ -70,68 +72,107 @@ export function SetupWizard({ choices }: { choices: Choice[] }) {
   const update = (fn: (d: SetupDraft) => SetupDraft) => setDraft((d) => (d ? fn(d) : d));
 
   return (
-    <div className="flex flex-col gap-8">
-      <section aria-labelledby="describe" className="flex flex-col gap-4">
-        <div>
-          <p className="text-muted-foreground text-sm font-medium">Step 1 of 2</p>
-          <h1 id="describe" className="text-2xl font-semibold tracking-tight">
-            What&apos;s happening?
+    <div className="flex flex-col gap-10">
+      <Stepper step={draft ? 3 : pending === "suggest" ? 2 : 1} />
+      <section
+        aria-labelledby="describe"
+        className="grid items-start gap-8 lg:grid-cols-[2fr_3fr] lg:gap-12"
+      >
+        <div className="flex flex-col gap-4 lg:pt-10">
+          <p className="text-muted-foreground text-xs font-semibold tracking-[0.3em] uppercase">
+            Create an operation
+          </p>
+          <h1
+            id="describe"
+            className="text-4xl leading-tight font-extrabold tracking-tight sm:text-5xl"
+          >
+            What&apos;s <span className="text-brand">happening?</span>
           </h1>
-          <p className="text-muted-foreground mt-1 text-sm">
-            Describe it the way you would to a colleague. We&apos;ll suggest teams, places and
-            tasks.
+          <p className="text-muted-foreground">
+            Describe it in your own words, the way you would to a colleague. We&apos;ll set up
+            teams, places and tasks for you.
           </p>
         </div>
-        <div className="flex flex-col gap-2">
-          <Label htmlFor="situation">Describe the situation</Label>
-          <Textarea
-            id="situation"
-            rows={4}
-            value={situation}
-            onChange={(e) => setSituation(e.target.value)}
-            placeholder={choices[0]?.example}
-          />
-          <div className="flex flex-wrap gap-2" aria-label="Examples">
-            {choices.map((c) => (
-              <button
-                key={c.id}
-                type="button"
-                onClick={() => setSituation(c.example)}
-                className="border-border hover:bg-muted rounded-full border px-3 py-1 text-sm"
-              >
-                {c.name}
-              </button>
-            ))}
+
+        <div className="border-border bg-background flex flex-col gap-6 rounded-3xl border p-5 shadow-[0_24px_60px_-30px_rgba(194,65,12,0.35)] sm:p-7">
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="situation">Describe the situation</Label>
+            <div className="relative">
+              <Icon name="pen" className="text-muted-foreground absolute top-3.5 left-3.5 size-5" />
+              <Textarea
+                id="situation"
+                rows={4}
+                maxLength={4000}
+                value={situation}
+                onChange={(e) => setSituation(e.target.value)}
+                placeholder={choices[0]?.example}
+                className="rounded-2xl pl-11 text-base"
+              />
+            </div>
           </div>
-        </div>
-        <div className="flex max-w-xs flex-col gap-2">
-          <Label htmlFor="startsAt">When does it start? (optional)</Label>
-          <Input
-            id="startsAt"
-            type="datetime-local"
-            value={startsLocal}
-            onChange={(e) => setStartsLocal(e.target.value)}
-          />
-        </div>
-        <div>
-          <Button
-            onClick={() => suggest()}
-            loading={pending === "suggest"}
-            disabled={situation.trim().length < 3 || pending !== null}
-          >
-            {draft ? "Suggest again" : "Suggest a setup"}
-          </Button>
+
+          <div className="flex flex-col gap-3">
+            <p className="font-semibold">Or choose a situation type</p>
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+              {choices.map((c) => {
+                const selected = situation === c.example;
+                return (
+                  <button
+                    key={c.id}
+                    type="button"
+                    aria-pressed={selected}
+                    onClick={() => setSituation(c.example)}
+                    className={cn(
+                      "flex flex-col items-center gap-2 rounded-2xl border px-3 py-4 text-center text-sm font-semibold transition-colors",
+                      selected
+                        ? "border-brand bg-brand-soft text-foreground"
+                        : "border-border hover:bg-muted",
+                    )}
+                  >
+                    <Icon name={c.icon} className={cn("size-7", selected ? "text-brand" : "")} />
+                    {c.name}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          <div className="flex max-w-xs flex-col gap-2">
+            <Label htmlFor="startsAt">When does it start? (optional)</Label>
+            <Input
+              id="startsAt"
+              type="datetime-local"
+              value={startsLocal}
+              onChange={(e) => setStartsLocal(e.target.value)}
+            />
+          </div>
+
+          <div className="flex justify-end">
+            <Button
+              size="lg"
+              onClick={() => suggest()}
+              loading={pending === "suggest"}
+              disabled={situation.trim().length < 3 || pending !== null}
+            >
+              {draft ? "Suggest again" : "Suggest a setup"} <Icon name="arrow" className="size-4" />
+            </Button>
+          </div>
         </div>
       </section>
 
       {error ? <Alert variant="danger">{error}</Alert> : null}
 
       {draft && suggestion ? (
-        <section aria-labelledby="review" className="flex flex-col gap-6">
+        <section
+          aria-labelledby="review"
+          className="border-border bg-background flex flex-col gap-6 rounded-3xl border p-5 shadow-[0_24px_60px_-30px_rgba(194,65,12,0.35)] sm:p-8"
+        >
           <div>
-            <p className="text-muted-foreground text-sm font-medium">Step 2 of 2</p>
-            <h2 id="review" className="text-2xl font-semibold tracking-tight">
-              Check the setup, then launch
+            <p className="text-muted-foreground text-xs font-semibold tracking-[0.3em] uppercase">
+              Review and customize
+            </p>
+            <h2 id="review" className="mt-1 text-3xl font-extrabold tracking-tight">
+              Review, refine and <span className="text-brand">launch.</span>
             </h2>
             <p className="text-muted-foreground mt-1 text-sm">
               Set up as: <Badge variant="primary">{suggestion.pack.name}</Badge>{" "}
@@ -146,7 +187,7 @@ export function SetupWizard({ choices }: { choices: Choice[] }) {
                   {i > 0 ? " · " : ""}
                   <button
                     type="button"
-                    className="text-primary underline"
+                    className="text-brand underline"
                     onClick={() => suggest(a.id)}
                   >
                     {a.name}
@@ -216,7 +257,7 @@ export function SetupWizard({ choices }: { choices: Choice[] }) {
               {draft.teams.map((team) => {
                 const tasks = draft.tasks.filter((t) => t.teamKey === team.key);
                 return (
-                  <li key={team.key} className="border-border rounded-lg border p-4">
+                  <li key={team.key} className="border-border rounded-2xl border p-4">
                     <div className="flex items-start gap-2">
                       <Input
                         aria-label={`${draft.config.terms.team} name`}
@@ -301,5 +342,45 @@ export function SetupWizard({ choices }: { choices: Choice[] }) {
         </section>
       ) : null}
     </div>
+  );
+}
+
+const STEPS = ["Describe", "Generate", "Review", "Launch"];
+
+/** Progress across Describe → Generate → Review → Launch. */
+function Stepper({ step }: { step: number }) {
+  return (
+    <ol aria-label="Progress" className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm">
+      {STEPS.map((label, i) => {
+        const n = i + 1;
+        const done = n < step;
+        const current = n === step;
+        return (
+          <li
+            key={label}
+            aria-current={current ? "step" : undefined}
+            className="flex items-center gap-2"
+          >
+            <span
+              className={cn(
+                "grid size-7 place-items-center rounded-full text-xs font-bold",
+                current
+                  ? "bg-brand text-white"
+                  : done
+                    ? "bg-brand-soft text-brand"
+                    : "bg-muted text-muted-foreground",
+              )}
+            >
+              {done ? <Icon name="check" className="size-4" /> : n}
+            </span>
+            <span
+              className={cn("font-medium", current ? "text-foreground" : "text-muted-foreground")}
+            >
+              {label}
+            </span>
+          </li>
+        );
+      })}
+    </ol>
   );
 }

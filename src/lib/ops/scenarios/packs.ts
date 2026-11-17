@@ -10,6 +10,7 @@ import type { ScenarioPack } from "@/lib/ops/scenarios/types";
 const general: ScenarioPack = {
   id: "general",
   name: "Something else",
+  icon: "grid",
   example: "Blood donation camp on Saturday at the community hall, 15 helpers, 2 rooms.",
   keywords: [],
   defaultName: "New operation",
@@ -60,6 +61,7 @@ const general: ScenarioPack = {
 const festival: ScenarioPack = {
   id: "festival",
   name: "Festival or event",
+  icon: "party",
   example:
     "College festival tomorrow from 9 am. 40 volunteers, 5 departments and 3 event locations.",
   keywords: [
@@ -152,6 +154,7 @@ const festival: ScenarioPack = {
 const exam: ScenarioPack = {
   id: "exam",
   name: "Exam day",
+  icon: "cap",
   example: "University exam tomorrow at 10 am. 6 halls, 30 invigilators, 900 candidates.",
   keywords: [
     "exam",
@@ -239,6 +242,7 @@ const exam: ScenarioPack = {
 const emergency: ScenarioPack = {
   id: "emergency",
   name: "Flood or emergency response",
+  icon: "siren",
   example: "Flood in 3 wards since this morning. 25 responders, one relief camp at the school.",
   keywords: [
     "flood",

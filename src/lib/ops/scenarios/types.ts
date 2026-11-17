@@ -31,6 +31,8 @@ export type ScenarioPack = {
   name: string;
   /** Example description shown as a placeholder. */
   example: string;
+  /** Generic icon name for the situation card (see components/ops/icons). */
+  icon: "party" | "cap" | "siren" | "grid" | "users" | "trophy" | "calendar";
   /** Lower-case words/phrases that suggest this situation. */
   keywords: string[];
   defaultName: string;

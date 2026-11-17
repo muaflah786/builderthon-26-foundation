@@ -9,16 +9,19 @@
  * reach 3:1 against the background (WCAG 1.4.11, non-text contrast).
  */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-  --muted: #f4f4f5;
-  --muted-foreground: #52525b;
+  --background: #fcfaf8;
+  --foreground: #141414;
+  --muted: #f5efe9;
+  --muted-foreground: #57534e;
   /* Dividers and card outlines (decorative). */
-  --border: #e4e4e7;
+  --border: #ece4dc;
   /* Form control borders (must stay visible: 3:1). */
   --input: #71717a;
-  --primary: #c2410c;
+  --primary: #141414;
   --primary-foreground: #ffffff;
+  /* Brand accent (ORDOX orange). AA on the light background. */
+  --brand: #c2410c;
+  --brand-soft: #fff1e6;
   --danger: #b91c1c;
   --danger-foreground: #ffffff;
   --success: #15803d;
@@ -28,7 +31,7 @@
   /* Focus ring colour (used by the global :focus-visible outline). */
   --ring: #ea580c;
   /* Base corner radius; sm/md/lg/xl radii are derived from it in @theme. */
-  --radius: 0.5rem;
+  --radius: 0.75rem;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -39,8 +42,10 @@
     --muted-foreground: #a1a1aa;
     --border: #27272a;
     --input: #71717a;
-    --primary: #fb923c;
-    --primary-foreground: #1c1917;
+    --primary: #fafafa;
+    --primary-foreground: #0a0a0a;
+    --brand: #fb923c;
+    --brand-soft: #2a1a10;
     --danger: #dc2626;
     --danger-foreground: #ffffff;
     --success: #4ade80;
@@ -60,6 +65,8 @@
   --color-input: var(--input);
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
+  --color-brand: var(--brand);
+  --color-brand-soft: var(--brand-soft);
   --color-danger: var(--danger);
   --color-danger-foreground: var(--danger-foreground);
   --color-success: var(--success);

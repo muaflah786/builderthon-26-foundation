@@ -7,6 +7,11 @@ export const metadata: Metadata = { title: "Start an operation" };
 
 export default async function NewOperationPage() {
   await requireUser();
-  const choices = SCENARIO_PACKS.map((p) => ({ id: p.id, name: p.name, example: p.example }));
+  const choices = SCENARIO_PACKS.map((p) => ({
+    id: p.id,
+    name: p.name,
+    example: p.example,
+    icon: p.icon,
+  }));
   return <SetupWizard choices={choices} />;
 }

@@ -81,8 +81,8 @@ export function SiteHeader({ appName, user, nav, userMenu }: SiteHeaderProps) {
   );
 
   return (
-    <header className="border-border bg-background border-b">
-      <div className="mx-auto flex h-14 w-full max-w-6xl items-center justify-between gap-4 px-4">
+    <header className="border-border bg-background/80 sticky top-0 z-30 border-b backdrop-blur">
+      <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between gap-4 px-4">
         <Link href="/" aria-label={`${appName} home`} className="flex items-center gap-2">
           <Wordmark name={appName} />
         </Link>

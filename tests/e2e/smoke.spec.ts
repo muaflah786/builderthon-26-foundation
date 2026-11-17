@@ -1,9 +1,12 @@
 import { expect, test } from "@playwright/test";
 
-test("home page renders the app name and auth links", async ({ page }) => {
+test("home page renders the ORDOX brand and calls to action", async ({ page }) => {
   await page.goto("/");
-  await expect(page.getByRole("heading", { level: 1, name: "ORDOX" })).toBeVisible();
-  await expect(page.getByRole("link", { name: "Create an account" })).toBeVisible();
+  await expect(
+    page.getByRole("heading", { level: 1, name: /One platform\.\s*Every situation\./ }),
+  ).toBeVisible();
+  await expect(page.getByRole("link", { name: "ORDOX home" })).toBeVisible();
+  await expect(page.getByRole("link", { name: /Create an operation/ })).toBeVisible();
 });
 
 test("health endpoint reports ok", async ({ request }) => {

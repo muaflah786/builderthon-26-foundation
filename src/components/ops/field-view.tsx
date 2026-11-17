@@ -81,13 +81,13 @@ export function FieldView({ data }: { data: FieldData }) {
         {data.member.level === "lead" ? (
           <Link
             href={`/app/ops/${data.operation.id}/tasks`}
-            className="text-primary text-sm underline"
+            className="text-brand text-sm underline"
           >
             All {terms.tasks.toLowerCase()} in your {terms.team.toLowerCase()}
           </Link>
         ) : null}
         {data.canCommand ? (
-          <Link href={`/app/ops/${data.operation.id}`} className="text-primary text-sm underline">
+          <Link href={`/app/ops/${data.operation.id}`} className="text-brand text-sm underline">
             Back to the command centre
           </Link>
         ) : null}

@@ -63,7 +63,7 @@ export function SignInForm({ next }: { next: string }) {
       <SubmitButton pending={pending}>Sign in</SubmitButton>
       <p className="text-muted-foreground text-sm">
         No account?{" "}
-        <Link href={signUpHref} className="text-primary underline underline-offset-4">
+        <Link href={signUpHref} className="text-brand underline underline-offset-4">
           Sign up
         </Link>
       </p>
