@@ -30,6 +30,9 @@ export const operations = sqliteTable("operations", {
   startsAt: integer("starts_at", { mode: "timestamp_ms" }),
   joinToken: text("join_token").notNull().unique(),
   joinEnabled: integer("join_enabled", { mode: "boolean" }).notNull().default(true),
+  closedAt: integer("closed_at", { mode: "timestamp_ms" }),
+  /** Member id of the organizer who closed it. */
+  closedByMemberId: text("closed_by_member_id"),
   createdBy: text("created_by")
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),

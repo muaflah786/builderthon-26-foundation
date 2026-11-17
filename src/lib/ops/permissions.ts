@@ -40,3 +40,9 @@ export function canStartTask(
 export function canFinishTask(m: MemberRef, task: { assigneeMemberId: string | null }) {
   return task.assigneeMemberId === m.id || atLeast(m, "coordinator");
 }
+
+/** Close the operation and export its records: organizer only. */
+export const canClose = (m: MemberRef) => m.level === "organizer";
+
+/** Read the operation summary: coordinators and organizers. */
+export const canViewSummary = (m: MemberRef) => atLeast(m, "coordinator");

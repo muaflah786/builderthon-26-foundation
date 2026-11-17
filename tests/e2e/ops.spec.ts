@@ -59,7 +59,7 @@ test.describe("one platform, every situation", () => {
   }
 });
 
-test("full journey: launch, join by link, do a task, report and resolve a problem", async ({
+test("full journey: launch, join, do a task, report and resolve a problem, close and summarise", async ({
   browser,
 }) => {
   const orgContext = await browser.newContext();
@@ -112,6 +112,33 @@ test("full journey: launch, join by link, do a task, report and resolve a proble
   await problem.getByRole("button", { name: "Mark resolved" }).click();
   await expect(org.getByRole("button", { name: "Mark resolved" })).toHaveCount(0);
   await expect(org.getByText(/resolved "Two candidates/)).toBeVisible();
+
+  // The organizer closes the operation and reviews the summary.
+  await org.getByRole("link", { name: "Close operation" }).click();
+  await expect(org.getByRole("heading", { level: 1, name: /^Close / })).toBeVisible();
+  await org.getByRole("button", { name: "Close operation" }).click();
+  await expect(org.getByText("Operation closed")).toBeVisible();
+  await expect(org.getByText(/^1 \/ \d+$/)).toBeVisible();
+  await expect(org.getByText("Every reported incident was resolved.")).toBeVisible();
+  await expect(org.getByText(/closed the operation/)).toBeVisible();
+
+  const opId = new URL(org.url()).pathname.split("/")[3];
+  const csv = await org.request.get(`/api/ops/${opId}/export?type=issues`);
+  expect(csv.status()).toBe(200);
+  expect(csv.headers()["content-type"]).toContain("text/csv");
+  expect(await csv.text()).toContain("Two candidates without hall tickets");
+
+  // After closing: participants can't act, and nobody new can join.
+  await vol.reload();
+  await expect(vol.getByText("This operation is closed")).toBeVisible();
+  await expect(vol.getByRole("button", { name: "Report an incident" })).toHaveCount(0);
+  const csvForMember = await vol.request.get(`/api/ops/${opId}/export?type=issues`);
+  expect(csvForMember.status()).toBe(404);
+  const lateContext = await browser.newContext();
+  const late = await lateContext.newPage();
+  await late.goto(joinUrl);
+  await expect(late.getByText("Joining is closed")).toBeVisible();
+  await lateContext.close();
 
   // The participant never sees the command centre.
   const opUrl = vol.url();

@@ -692,3 +692,6 @@ export async function actOnIssue(
 export function roleLabel(config: OpsConfig, level: PermissionLevel) {
   return config.roleLabels[level];
 }
+
+/** Shared with the closure service (same module family). */
+export { ref as memberRef, log as logActivity };

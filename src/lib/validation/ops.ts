@@ -44,3 +44,11 @@ export const issueActionSchema = z.object({
 export type IssueActionInput = z.infer<typeof issueActionSchema>;
 
 export const joinLinkActionSchema = z.object({ action: z.enum(["rotate", "enable", "disable"]) });
+
+export const closeOperationSchema = z.object({
+  /** What happens to tasks that are not done: keep them as unfinished, or mark them cancelled. */
+  unfinished: z.enum(["leave", "cancel"]).default("leave"),
+});
+export type CloseOperationInput = z.infer<typeof closeOperationSchema>;
+
+export const exportQuerySchema = z.object({ type: z.enum(["tasks", "issues", "activity"]) });

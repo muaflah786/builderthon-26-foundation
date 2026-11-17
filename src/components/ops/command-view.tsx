@@ -2,6 +2,7 @@ import Link from "next/link";
 import { AutoRefresh, IssueButtons } from "@/components/ops/actions";
 import { Badge } from "@/components/ui/badge";
 import { buttonClasses } from "@/components/ui/button";
+import { canClose } from "@/lib/ops/permissions";
 import type { AttentionSignal } from "@/lib/ops/types";
 import type { getCommandView } from "@/server/services/ops";
 
@@ -22,6 +23,7 @@ export function CommandView({ data, renderedAt }: { data: CommandData; renderedA
     unclaimed_tasks: `${terms.tasks.toLowerCase()} nobody has started`,
   };
   const percent = data.counts.total ? Math.round((data.counts.done / data.counts.total) * 100) : 0;
+  const live = data.operation.status === "live";
   const attention = data.attentionOrder.filter((s) => data.attention[s].count > 0);
 
   return (
@@ -38,17 +40,42 @@ export function CommandView({ data, renderedAt }: { data: CommandData; renderedA
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
-          <Link href={`/app/ops/${data.operation.id}/share`} className={buttonClasses()}>
-            Invite people
-          </Link>
+          {live ? (
+            <Link href={`/app/ops/${data.operation.id}/share`} className={buttonClasses()}>
+              Invite people
+            </Link>
+          ) : null}
           <Link
             href={`/app/ops/${data.operation.id}?view=field`}
             className={buttonClasses({ variant: "secondary" })}
           >
             See the field view
           </Link>
+          <Link
+            href={`/app/ops/${data.operation.id}/summary`}
+            className={buttonClasses({ variant: "secondary" })}
+          >
+            Summary
+          </Link>
+          {live && canClose({ id: data.member.id, level: data.member.level, teamId: null }) ? (
+            <Link
+              href={`/app/ops/${data.operation.id}/close`}
+              className={buttonClasses({ variant: "ghost" })}
+            >
+              Close operation
+            </Link>
+          ) : null}
         </div>
       </header>
+
+      {!live ? (
+        <p className="bg-muted rounded-lg p-4 text-sm">
+          This operation is closed. Nothing can be changed.{" "}
+          <Link href={`/app/ops/${data.operation.id}/summary`} className="text-primary underline">
+            See the summary
+          </Link>
+        </p>
+      ) : null}
 
       <section
         aria-labelledby="numbers"
@@ -131,7 +158,9 @@ export function CommandView({ data, renderedAt }: { data: CommandData; renderedA
                   </p>
                   {i.details ? <p className="mt-1 text-sm">{i.details}</p> : null}
                 </div>
-                <IssueButtons operationId={data.operation.id} issueId={i.id} status={i.status} />
+                {live ? (
+                  <IssueButtons operationId={data.operation.id} issueId={i.id} status={i.status} />
+                ) : null}
               </li>
             ))}
           </ul>

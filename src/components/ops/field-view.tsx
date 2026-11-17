@@ -30,13 +30,15 @@ function TaskCard({ task, data, mine }: { task: TaskView; data: FieldData; mine:
         {task.dueAt ? `By ${time(task.dueAt)}` : null}
       </p>
       {task.instructions ? <p className="text-sm">{task.instructions}</p> : null}
-      <TaskButtons
-        operationId={data.operation.id}
-        taskId={task.id}
-        status={task.status}
-        mine={mine}
-        taskWord={terms.task}
-      />
+      {data.operation.status === "live" ? (
+        <TaskButtons
+          operationId={data.operation.id}
+          taskId={task.id}
+          status={task.status}
+          mine={mine}
+          taskWord={terms.task}
+        />
+      ) : null}
     </li>
   );
 }
@@ -108,13 +110,15 @@ export function FieldView({ data }: { data: FieldData }) {
         )}
       </section>
 
-      <ReportProblem
-        operationId={data.operation.id}
-        issueWord={terms.issue.toLowerCase()}
-        categories={config.issueCategories}
-        locations={data.locations}
-        locationWord={terms.location.toLowerCase()}
-      />
+      {data.operation.status === "live" ? (
+        <ReportProblem
+          operationId={data.operation.id}
+          issueWord={terms.issue.toLowerCase()}
+          categories={config.issueCategories}
+          locations={data.locations}
+          locationWord={terms.location.toLowerCase()}
+        />
+      ) : null}
 
       <section aria-labelledby="my-tasks" className="flex flex-col gap-3">
         <h2 id="my-tasks" className="text-lg font-semibold">

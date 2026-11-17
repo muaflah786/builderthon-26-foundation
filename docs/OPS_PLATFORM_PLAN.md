@@ -356,22 +356,22 @@ Run on 2026-11-17 in this worktree after `npm ci`:
 
 **Implemented**
 
-| Area | What works |
-| --- | --- |
+| Area             | What works                                                                                                                                                                                                                                                                                   |
+| ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Universal engine | Scenario packs as data (general, festival/event, exam day, flood/emergency); recognise → extract counts (also number words, "3 event locations") → instantiate with per-place teams; "Not quite right?" pack switch; "We assumed…" notes; guard test fails if shared code mentions a pack id |
-| Setup | Describe → Review (rename operation, rename the 4 role labels, rename/remove teams, remove tasks) → Launch, in one transaction, validated server-side |
-| Permissions | 4 fixed levels; one matrix in `src/lib/ops/permissions.ts`; non-members and global admins get 404 (tested) |
-| Joining | `/join/<token>` with sign-up on the same page, one-tap Join with optional team, duplicate-safe, rate-limited; QR via `uqr`; copy link / invite message; new link / stop joining |
-| Field view | Role + team + place, "Right now" card, Report a problem (category, place, urgent), My tasks: Start (claims) / Mark as Completed (optional note) / Hand back, team list, Need help contacts, my reports with status; refreshes every 30 s |
-| Command centre | Done / in progress / late / open problems; Needs attention in the operation's configured order; urgent first; "I'm on it" / "Mark resolved"; late tasks; per-team progress; recent activity; refreshes every 15 s |
-| History | Every launch, join, task and problem change is in `ops_activity` |
+| Setup            | Describe → Review (rename operation, rename the 4 role labels, rename/remove teams, remove tasks) → Launch, in one transaction, validated server-side                                                                                                                                        |
+| Permissions      | 4 fixed levels; one matrix in `src/lib/ops/permissions.ts`; non-members and global admins get 404 (tested)                                                                                                                                                                                   |
+| Joining          | `/join/<token>` with sign-up on the same page, one-tap Join with optional team, duplicate-safe, rate-limited; QR via `uqr`; copy link / invite message; new link / stop joining                                                                                                              |
+| Field view       | Role + team + place, "Right now" card, Report a problem (category, place, urgent), My tasks: Start (claims) / Mark as Completed (optional note) / Hand back, team list, Need help contacts, my reports with status; refreshes every 30 s                                                     |
+| Command centre   | Done / in progress / late / open problems; Needs attention in the operation's configured order; urgent first; "I'm on it" / "Mark resolved"; late tasks; per-team progress; recent activity; refreshes every 15 s                                                                            |
+| History          | Every launch, join, task and problem change is in `ops_activity`                                                                                                                                                                                                                             |
 
 **Partial**
 
 - Task conflicts: optimistic `version` check on task updates (second writer gets a clear "refresh" message). No offline queue yet.
 - Team leads have the permission to handle their own team's problems in the service, but there is no UI yet to make someone a lead (only organizers exist at launch; people join as members).
 
-**Not built tonight (planned, see §9):** offline mode (S6), closure + summary + export (S7), AI suggestions (S8), announcements, people/role management screens, conference/sports/logistics packs, deployment of this version.
+**Not built tonight (planned, see §9):** offline mode (S6), archive status (S7 rest), AI suggestions (S8), announcements, people/role management screens, conference/sports/logistics packs, deployment of this version.
 
 **Repository state:** nothing committed yet. Uncommitted local-only files that must NOT be committed: `drizzle/0002_ops.sql`, `drizzle/meta/0002_snapshot.json`, the change to `drizzle/meta/_journal.json`, `.claude/launch.json`, `local.db`, `e2e.db`.
 
@@ -387,3 +387,18 @@ npm run build && npm start
 3. On a phone on the same network, open the link shown (use the laptop's network IP in `APP_URL` for phones) → create an account → choose a hall → **Join** → **Start Duty** → **Mark as Completed** → **Report an incident** (tick urgent).
 4. Back on the laptop: **Go to the command centre** → the urgent incident is first → **Mark resolved**.
 5. Repeat step 2 with the flood text to show the same engine with different words, roles and teams.
+
+### Update 21:05 IST: closure and summary (S7) added
+
+**Verified:** `npm run check` 37 files / **257/257** ✅ · Playwright **27/27** ✅ (journey now also closes, checks the summary, downloads the CSV, and confirms read-only + join refused after closing) · production build ✅ (built by the Playwright run) · summary page checked by hand in the browser.
+
+| Area          | What works                                                                                                                                                                                                                                                                      |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Close         | Organizer only. Pre-close check shows unfinished tasks and open problems; choose "keep as unfinished" or "mark as cancelled"; one transaction; `closed_at` / `closed_by_member_id` recorded; join link disabled; logged in history                                              |
+| After closing | Read-only: task, problem and join actions are refused by the server (409/403) and their buttons are hidden; records are never deleted                                                                                                                                           |
+| Summary       | Coordinators and organizers; live snapshot before closing, final after. All numbers computed from records: completion %, completed after due time, by team, problems (urgent, resolved, unresolved list), median time to respond and to resolve, unfinished list, full timeline |
+| Export        | Organizer only: tasks, problems, full history as CSV; cells that start with `= + - @` are neutralised (CSV injection); no emails in exports. Print / save as PDF via the browser                                                                                                |
+
+Not done: an "archived" state separate from "closed".
+
+Schema change: `operations.closed_at`, `operations.closed_by_member_id`. The local uncommitted `0002_ops` migration was regenerated (still exactly one pending migration).
