@@ -102,7 +102,7 @@ test("full journey: launch, join, do a task, report and resolve a problem, close
 
   // People and roles: rename the lead role, then make the participant a lead.
   await org.getByRole("link", { name: "People", exact: true }).click();
-  await expect(org.getByRole("heading", { level: 1, name: "People and roles" })).toBeVisible();
+  await expect(org.getByRole("heading", { level: 1, name: /People & Roles/ })).toBeVisible();
   await org.getByLabel("Leads one team, handles that team's problems").fill("Hall In-charge");
   await org.getByRole("button", { name: "Save role names" }).click();
   await expect(org.getByText("Role names saved")).toBeVisible();
@@ -121,7 +121,7 @@ test("full journey: launch, join, do a task, report and resolve a problem, close
 
   // Task management after launch: create a duty for Hall 1; only Hall 1 sees it.
   await org.getByRole("link", { name: "Duties", exact: true }).click();
-  await expect(org.getByRole("heading", { level: 1, name: "Duties" })).toBeVisible();
+  await expect(org.getByRole("heading", { level: 1, name: /Manage Duties/ })).toBeVisible();
   await org.getByRole("link", { name: "New duty" }).first().click();
   await org.getByLabel("What needs to be done?").fill("Bring extra answer sheets");
   await org.getByLabel("Hall team").selectOption({ label: "Hall 1" });

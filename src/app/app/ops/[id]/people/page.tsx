@@ -30,7 +30,9 @@ export default async function PeoplePage({ params }: PageProps<"/app/ops/[id]/pe
       <header className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <p className="text-muted-foreground text-sm">{data.operation.name}</p>
-          <h1 className="text-2xl font-semibold tracking-tight">People and roles</h1>
+          <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl">
+            Manage <span className="text-brand">People &amp; Roles.</span>
+          </h1>
           <p className="text-muted-foreground text-sm">
             Put people in a {config.terms.team.toLowerCase()} and give them a role. Changes save
             straight away and people see them on their next refresh.

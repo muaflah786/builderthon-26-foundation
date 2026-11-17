@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AutoRefresh } from "@/components/ops/actions";
+import { Icon } from "@/components/ops/icons";
 import { StatePill } from "@/components/ops/state-pill";
 import { Badge } from "@/components/ui/badge";
 import { Button, buttonClasses } from "@/components/ui/button";
@@ -76,12 +77,26 @@ export default async function TasksPage({
       <AutoRefresh seconds={30} />
       <header className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <p className="text-muted-foreground text-sm">{data.operation.name}</p>
-          <h1 className="text-2xl font-semibold tracking-tight">{terms.tasks}</h1>
+          <p className="text-muted-foreground text-xs font-semibold tracking-[0.3em] uppercase">
+            {data.operation.name} · Operation {terms.tasks.toLowerCase()}
+          </p>
+          <h1 className="mt-1 text-3xl font-extrabold tracking-tight sm:text-4xl">
+            Manage {terms.tasks} &amp; <span className="text-brand">Progress.</span>
+          </h1>
+          <p className="text-muted-foreground mt-1">
+            Create, assign and track {terms.tasks.toLowerCase()} across all{" "}
+            {terms.teams.toLowerCase()} in real time.
+          </p>
         </div>
         <div className="flex flex-wrap gap-2">
           {data.canCreate ? (
-            <Link href={`${base}/new`} className={buttonClasses({ size: "lg" })}>
+            <Link
+              href={`${base}/new`}
+              className={buttonClasses({
+                size: "lg",
+                className: "bg-brand hover:bg-brand/90 text-white",
+              })}
+            >
               New {terms.task.toLowerCase()}
             </Link>
           ) : null}
@@ -93,6 +108,43 @@ export default async function TasksPage({
           </Link>
         </div>
       </header>
+
+      <section aria-label="Progress" className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+        {[
+          {
+            label: `${terms.tasks} completed`,
+            value: `${data.counts.done} / ${data.counts.all}`,
+            icon: "check" as const,
+          },
+          { label: "In progress", value: data.counts.in_progress, icon: "bolt" as const },
+          {
+            label: "Late",
+            value: data.counts.late,
+            icon: "alert" as const,
+            alert: data.counts.late > 0,
+          },
+          { label: "Waiting", value: data.counts.todo, icon: "calendar" as const },
+        ].map((c) => (
+          <div
+            key={c.label}
+            className="border-border bg-background flex items-center gap-4 rounded-2xl border p-4 shadow-sm"
+          >
+            <span
+              className={`grid size-12 shrink-0 place-items-center rounded-full ${c.alert ? "bg-danger/10 text-danger" : "bg-brand-soft text-brand"}`}
+            >
+              <Icon name={c.icon} className="size-6" />
+            </span>
+            <span>
+              <span
+                className={`block text-2xl font-extrabold tabular-nums ${c.alert ? "text-danger" : ""}`}
+              >
+                {c.value}
+              </span>
+              <span className="text-muted-foreground text-sm">{c.label}</span>
+            </span>
+          </div>
+        ))}
+      </section>
 
       <nav aria-label="Filter by state" className="-mx-4 overflow-x-auto px-4">
         <ul className="flex w-max gap-1">
