@@ -118,6 +118,25 @@ test("full journey: launch, join, do a task, report and resolve a problem, close
 
   await org.getByRole("link", { name: "Back to the command centre" }).click();
   await expect(org.getByText(/being handled/).first()).toBeVisible();
+
+  // Task management after launch: create a duty for Hall 1; only Hall 1 sees it.
+  await org.getByRole("link", { name: "Duties", exact: true }).click();
+  await expect(org.getByRole("heading", { level: 1, name: "Duties" })).toBeVisible();
+  await org.getByRole("link", { name: "New duty" }).first().click();
+  await org.getByLabel("What needs to be done?").fill("Bring extra answer sheets");
+  await org.getByLabel("Hall team").selectOption({ label: "Hall 1" });
+  await org.getByLabel(/Important/).check();
+  await org.getByRole("button", { name: "Create duty" }).click();
+  await expect(
+    org.getByRole("heading", { level: 1, name: "Bring extra answer sheets" }),
+  ).toBeVisible();
+  await expect(org.getByText(/created "Bring extra answer sheets"/)).toBeVisible();
+
+  await vol.reload();
+  await expect(vol.getByRole("link", { name: "Bring extra answer sheets" })).toBeVisible();
+
+  await org.goto(new URL(org.url()).pathname.replace(/\/tasks\/.*$/, ""));
+  await expect(org.getByText(/being handled/).first()).toBeVisible();
   const problem = org
     .getByRole("listitem")
     .filter({ hasText: "Two candidates without hall tickets" })

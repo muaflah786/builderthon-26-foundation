@@ -43,7 +43,7 @@ import type { SessionUser } from "@/types/auth";
  */
 
 type Tx = Parameters<Parameters<typeof db.transaction>[0]>[0];
-type Db = typeof db | Tx;
+export type Db = typeof db | Tx;
 
 // ---------------------------------------------------------------- access
 
@@ -75,6 +75,7 @@ async function log(
   entityId: string,
   action: string,
   summary: string,
+  data?: Record<string, unknown>,
 ) {
   await tx.insert(opsActivity).values({
     operationId,
@@ -83,6 +84,7 @@ async function log(
     entityId,
     action,
     summary,
+    data: data ?? null,
   });
 }
 
@@ -582,6 +584,7 @@ export async function actOnTask(
     values = {
       status: "done",
       completedAt: now,
+      completedByMemberId: member.id,
       completionNote: input.note ?? null,
       assigneeMemberId: task.assigneeMemberId ?? member.id,
     };

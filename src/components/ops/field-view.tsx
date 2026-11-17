@@ -17,7 +17,12 @@ function TaskCard({ task, data, mine }: { task: TaskView; data: FieldData; mine:
   return (
     <li className="border-border flex flex-col gap-3 rounded-lg border p-4">
       <div className="flex flex-wrap items-start justify-between gap-2">
-        <p className="font-medium">{task.title}</p>
+        <Link
+          href={`/app/ops/${data.operation.id}/tasks/${task.id}`}
+          className="font-medium hover:underline"
+        >
+          {task.title}
+        </Link>
         <div className="flex gap-1">
           {task.priority === "high" ? <Badge variant="warning">Important</Badge> : null}
           {task.status === "in_progress" ? <Badge variant="primary">In progress</Badge> : null}
@@ -72,6 +77,14 @@ export function FieldView({ data }: { data: FieldData }) {
         </p>
         {data.team?.directions ? (
           <p className="text-muted-foreground text-sm">{data.team.directions}</p>
+        ) : null}
+        {data.member.level === "lead" ? (
+          <Link
+            href={`/app/ops/${data.operation.id}/tasks`}
+            className="text-primary text-sm underline"
+          >
+            All {terms.tasks.toLowerCase()} in your {terms.team.toLowerCase()}
+          </Link>
         ) : null}
         {data.canCommand ? (
           <Link href={`/app/ops/${data.operation.id}`} className="text-primary text-sm underline">

@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, asc, count, eq } from "drizzle-orm";
+import { and, asc, eq, sql } from "drizzle-orm";
 import { AppError } from "@/lib/errors";
 import { canManagePeople, canRenameRoles, canSetLevel, canSetTeam } from "@/lib/ops/permissions";
 import { roleLabelsSchema, type RoleLabels } from "@/lib/ops/types";
@@ -74,17 +74,6 @@ export async function updateMember(
     if (!canSetLevel(actorRef, target, input.level)) {
       throw AppError.forbidden("You can't give or change that role.");
     }
-    if (target.level === "organizer") {
-      const [{ organizers }] = await db
-        .select({ organizers: count() })
-        .from(opsMembers)
-        .where(and(eq(opsMembers.operationId, operationId), eq(opsMembers.level, "organizer")));
-      if (organizers <= 1) {
-        throw AppError.conflict(
-          `There must always be at least one ${roleLabels.organizer}. Give someone else that role first.`,
-        );
-      }
-    }
     values.level = input.level;
     changes.push(`is now ${roleLabels[input.level]}`);
   }
@@ -107,11 +96,27 @@ export async function updateMember(
   if (changes.length === 0) return target;
 
   return db.transaction(async (tx) => {
+    const demotingOrganizer =
+      target.level === "organizer" && values.level !== undefined && values.level !== "organizer";
+    // Atomic guard: the update only applies while another organizer still exists,
+    // so two organizers demoting each other at once can never leave none.
     const [row] = await tx
       .update(opsMembers)
       .set(values)
-      .where(eq(opsMembers.id, target.id))
+      .where(
+        and(
+          eq(opsMembers.id, target.id),
+          demotingOrganizer
+            ? sql`(select count(*) from ops_members where operation_id = ${operationId} and level = 'organizer') > 1`
+            : undefined,
+        ),
+      )
       .returning();
+    if (!row) {
+      throw AppError.conflict(
+        `There must always be at least one ${roleLabels.organizer}. Give someone else that role first.`,
+      );
+    }
     await logActivity(
       tx,
       operationId,

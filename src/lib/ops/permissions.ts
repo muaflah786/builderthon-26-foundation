@@ -74,3 +74,31 @@ export function canSetTeam(actor: MemberRef, target: Pick<MemberRef, "level">) {
 
 /** Rename the four role labels: organizer only (labels never change access). */
 export const canRenameRoles = (m: MemberRef) => m.level === "organizer";
+
+type TaskScope = { teamId: string | null; assigneeMemberId: string | null; status?: string };
+
+/**
+ * The single visibility rule for tasks (docs/OPS_STATUS_AND_CONFIG_ENGINE_DESIGN.md D3).
+ * Computed from the member's CURRENT level and team on every request.
+ */
+export function canSeeTask(m: MemberRef, task: TaskScope) {
+  if (atLeast(m, "coordinator")) return true;
+  if (task.assigneeMemberId === m.id) return true;
+  if (m.level === "lead") return task.teamId !== null && task.teamId === m.teamId;
+  // Members: unclaimed waiting tasks of their own team (or with no team when they have none).
+  return task.status === "todo" && task.assigneeMemberId === null && task.teamId === m.teamId;
+}
+
+/** Task overview screen: coordinators+ (everything) and leads (their team). */
+export const canViewTaskList = (m: MemberRef) => atLeast(m, "lead");
+
+/** Create a task for a team (null = no team): coordinators+, or a lead for their own team. */
+export function canCreateTaskFor(m: MemberRef, teamId: string | null) {
+  if (atLeast(m, "coordinator")) return true;
+  return m.level === "lead" && teamId !== null && teamId === m.teamId;
+}
+
+/** Edit or reassign a task: coordinators+, or a lead for their own team's tasks. */
+export function canEditTask(m: MemberRef, task: Pick<TaskScope, "teamId">) {
+  return canCreateTaskFor(m, task.teamId);
+}

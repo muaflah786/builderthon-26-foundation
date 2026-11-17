@@ -52,6 +52,12 @@ export function CommandView({ data, renderedAt }: { data: CommandData; renderedA
             See the field view
           </Link>
           <Link
+            href={`/app/ops/${data.operation.id}/tasks`}
+            className={buttonClasses({ variant: "secondary" })}
+          >
+            {terms.tasks}
+          </Link>
+          <Link
             href={`/app/ops/${data.operation.id}/people`}
             className={buttonClasses({ variant: "secondary" })}
           >

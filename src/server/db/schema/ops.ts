@@ -63,6 +63,9 @@ export const opsTeams = sqliteTable(
     name: text("name").notNull(),
     purpose: text("purpose"),
     locationId: text("location_id").references(() => opsLocations.id, { onDelete: "set null" }),
+    /** Removed teams are archived, never deleted, so history stays accurate. */
+    archivedAt: integer("archived_at", { mode: "timestamp_ms" }),
+    archivedByMemberId: text("archived_by_member_id"),
     ...timestamps(),
   },
   (t) => [index("ops_teams_op_idx").on(t.operationId)],
@@ -110,11 +113,26 @@ export const opsTasks = sqliteTable(
     startedAt: integer("started_at", { mode: "timestamp_ms" }),
     completedAt: integer("completed_at", { mode: "timestamp_ms" }),
     completionNote: text("completion_note"),
+    completedByMemberId: text("completed_by_member_id"),
+    createdByMemberId: text("created_by_member_id"),
+    /** When true, a lead or coordinator (never the completer) must check the work. */
+    requiresVerification: integer("requires_verification", { mode: "boolean" })
+      .notNull()
+      .default(false),
+    verifiedAt: integer("verified_at", { mode: "timestamp_ms" }),
+    verifiedByMemberId: text("verified_by_member_id"),
+    blockedReason: text("blocked_reason"),
+    blockedAt: integer("blocked_at", { mode: "timestamp_ms" }),
+    cancelledReason: text("cancelled_reason"),
     /** Incremented on every change; used for conflict detection. */
     version: integer("version").notNull().default(1),
     ...timestamps(),
   },
-  (t) => [index("ops_tasks_op_status_idx").on(t.operationId, t.status)],
+  (t) => [
+    index("ops_tasks_op_status_idx").on(t.operationId, t.status),
+    index("ops_tasks_op_team_idx").on(t.operationId, t.teamId),
+    index("ops_tasks_op_assignee_idx").on(t.operationId, t.assigneeMemberId),
+  ],
 );
 
 export const opsIssues = sqliteTable(
@@ -157,9 +175,14 @@ export const opsActivity = sqliteTable(
     entityId: text("entity_id").notNull(),
     action: text("action").notNull(),
     summary: text("summary").notNull(),
+    /** Structured details, e.g. { field, from, to, reason }. */
+    data: text("data", { mode: "json" }).$type<Record<string, unknown>>(),
     ...timestamps(),
   },
-  (t) => [index("ops_activity_op_created_idx").on(t.operationId, t.createdAt)],
+  (t) => [
+    index("ops_activity_op_created_idx").on(t.operationId, t.createdAt),
+    index("ops_activity_op_entity_idx").on(t.operationId, t.entityId),
+  ],
 );
 
 export type Operation = typeof operations.$inferSelect;

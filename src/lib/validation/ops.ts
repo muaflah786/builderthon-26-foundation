@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { PERMISSION_LEVELS, SEVERITIES } from "@/lib/ops/types";
+import { PERMISSION_LEVELS, PRIORITIES, SEVERITIES } from "@/lib/ops/types";
 
 /** Request schemas for the operations API (shared by forms and route handlers). */
 
@@ -63,3 +63,35 @@ export const updateMemberSchema = z
   })
   .refine((v) => v.teamId !== undefined || v.level !== undefined, "Nothing to change");
 export type UpdateMemberInput = z.infer<typeof updateMemberSchema>;
+
+const optionalId = z.preprocess((v) => (v === "" ? null : v), z.string().min(1).max(64).nullable());
+const optionalDue = z.preprocess(
+  (v) => (v === "" ? null : v),
+  z.iso.datetime({ offset: true }).nullable(),
+);
+
+export const createTaskSchema = z.object({
+  title: z.string().trim().min(1, "Give the task a short name").max(160),
+  instructions: optional(1000),
+  teamId: optionalId.optional(),
+  assigneeMemberId: optionalId.optional(),
+  locationId: optionalId.optional(),
+  dueAt: optionalDue.optional(),
+  priority: z.enum(PRIORITIES).default("normal"),
+});
+export type CreateTaskInput = z.infer<typeof createTaskSchema>;
+
+export const updateTaskSchema = createTaskSchema.partial().extend({
+  /** The version the editor started from; a newer version means someone else changed it. */
+  expectedVersion: z.number().int().min(1),
+});
+export type UpdateTaskInput = z.infer<typeof updateTaskSchema>;
+
+export const TASK_FILTERS = ["all", "todo", "in_progress", "late", "done"] as const;
+export const listTasksQuerySchema = z.object({
+  state: z.enum(TASK_FILTERS).default("all"),
+  teamId: optional(64),
+  q: optional(100),
+  page: z.coerce.number().int().min(1).default(1),
+});
+export type ListTasksQuery = z.infer<typeof listTasksQuerySchema>;
