@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { SEVERITIES } from "@/lib/ops/types";
+import { PERMISSION_LEVELS, SEVERITIES } from "@/lib/ops/types";
 
 /** Request schemas for the operations API (shared by forms and route handlers). */
 
@@ -52,3 +52,14 @@ export const closeOperationSchema = z.object({
 export type CloseOperationInput = z.infer<typeof closeOperationSchema>;
 
 export const exportQuerySchema = z.object({ type: z.enum(["tasks", "issues", "activity"]) });
+
+export const updateMemberSchema = z
+  .object({
+    /** "" or null = no team. */
+    teamId: z
+      .preprocess((v) => (v === "" ? null : v), z.string().min(1).max(64).nullable())
+      .optional(),
+    level: z.enum(PERMISSION_LEVELS).optional(),
+  })
+  .refine((v) => v.teamId !== undefined || v.level !== undefined, "Nothing to change");
+export type UpdateMemberInput = z.infer<typeof updateMemberSchema>;

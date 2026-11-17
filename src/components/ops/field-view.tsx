@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { AutoRefresh, ReportProblem, TaskButtons } from "@/components/ops/actions";
+import { AutoRefresh, IssueButtons, ReportProblem, TaskButtons } from "@/components/ops/actions";
 import { Badge } from "@/components/ui/badge";
 import { buttonClasses } from "@/components/ui/button";
 import { withArticle } from "@/lib/ops/terms";
@@ -70,6 +70,9 @@ export function FieldView({ data }: { data: FieldData }) {
             </>
           ) : null}
         </p>
+        {data.team?.directions ? (
+          <p className="text-muted-foreground text-sm">{data.team.directions}</p>
+        ) : null}
         {data.canCommand ? (
           <Link href={`/app/ops/${data.operation.id}`} className="text-primary text-sm underline">
             Back to the command centre
@@ -118,6 +121,38 @@ export function FieldView({ data }: { data: FieldData }) {
           locations={data.locations}
           locationWord={terms.location.toLowerCase()}
         />
+      ) : null}
+
+      {data.teamIssues.length > 0 ? (
+        <section aria-labelledby="team-issues" className="flex flex-col gap-3">
+          <h2 id="team-issues" className="text-lg font-semibold">
+            {terms.issues} in your {terms.team.toLowerCase()}
+          </h2>
+          <ul className="flex flex-col gap-2">
+            {data.teamIssues.map((i) => (
+              <li
+                key={i.id}
+                className={`flex flex-col gap-2 rounded-lg border p-4 ${i.severity === "urgent" ? "border-danger" : "border-border"}`}
+              >
+                <p className="font-medium">
+                  {i.severity === "urgent" ? (
+                    <Badge variant="danger" className="mr-2">
+                      Urgent
+                    </Badge>
+                  ) : null}
+                  {i.title}
+                </p>
+                <p className="text-muted-foreground text-sm">
+                  {i.reporter ? `From ${i.reporter}` : null}
+                  {i.status === "acknowledged" ? " · being handled" : ""}
+                </p>
+                {data.operation.status === "live" ? (
+                  <IssueButtons operationId={data.operation.id} issueId={i.id} status={i.status} />
+                ) : null}
+              </li>
+            ))}
+          </ul>
+        </section>
       ) : null}
 
       <section aria-labelledby="my-tasks" className="flex flex-col gap-3">

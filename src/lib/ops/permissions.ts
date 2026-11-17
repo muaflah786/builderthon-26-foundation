@@ -46,3 +46,31 @@ export const canClose = (m: MemberRef) => m.level === "organizer";
 
 /** Read the operation summary: coordinators and organizers. */
 export const canViewSummary = (m: MemberRef) => atLeast(m, "coordinator");
+
+/** Open the People screen and move people between teams. */
+export const canManagePeople = (m: MemberRef) => atLeast(m, "coordinator");
+
+/**
+ * Change someone's level. Organizers may set any level. Coordinators may only
+ * move people between `member` and `lead`, and never touch coordinators or
+ * organizers. (The "last organizer" rule needs a count and lives in the service.)
+ */
+export function canSetLevel(
+  actor: MemberRef,
+  target: Pick<MemberRef, "id" | "level">,
+  next: PermissionLevel,
+) {
+  if (actor.level === "organizer") return true;
+  if (actor.level !== "coordinator") return false;
+  const lowerLevels: PermissionLevel[] = ["member", "lead"];
+  return lowerLevels.includes(target.level) && lowerLevels.includes(next);
+}
+
+/** Change another person's team: coordinators+, but coordinators only for leads and members. */
+export function canSetTeam(actor: MemberRef, target: Pick<MemberRef, "level">) {
+  if (actor.level === "organizer") return true;
+  return actor.level === "coordinator" && (target.level === "member" || target.level === "lead");
+}
+
+/** Rename the four role labels: organizer only (labels never change access). */
+export const canRenameRoles = (m: MemberRef) => m.level === "organizer";

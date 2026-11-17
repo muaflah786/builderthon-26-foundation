@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, asc, desc, eq, inArray, isNull } from "drizzle-orm";
+import { and, asc, desc, eq, inArray, isNull, ne } from "drizzle-orm";
 import { AppError } from "@/lib/errors";
 import {
   canFinishTask,
@@ -402,6 +402,23 @@ export async function getFieldView(user: SessionUser, operationId: string) {
     .where(eq(opsLocations.operationId, operationId))
     .orderBy(asc(opsLocations.createdAt));
 
+  // Problems a team lead can respond to: open ones reported in their team.
+  const teamIssues =
+    member.teamId && member.level === "lead"
+      ? await db
+          .select({ issue: opsIssues, reporter: opsMembers.displayName })
+          .from(opsIssues)
+          .leftJoin(opsMembers, eq(opsMembers.id, opsIssues.reportedByMemberId))
+          .where(
+            and(
+              eq(opsIssues.operationId, operationId),
+              eq(opsIssues.teamId, member.teamId),
+              ne(opsIssues.status, "resolved"),
+            ),
+          )
+          .orderBy(desc(opsIssues.severity), asc(opsIssues.createdAt))
+      : [];
+
   return {
     operation: {
       id: operation.id,
@@ -426,6 +443,9 @@ export async function getFieldView(user: SessionUser, operationId: string) {
     teammates,
     coordinators,
     myIssues,
+    teamIssues: teamIssues
+      .filter((r) => canHandleIssue(ref(member), r.issue))
+      .map((r) => ({ ...r.issue, reporter: r.reporter })),
     locations,
   };
 }

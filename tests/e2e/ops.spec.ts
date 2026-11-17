@@ -99,6 +99,25 @@ test("full journey: launch, join, do a task, report and resolve a problem, close
 
   // The coordinator sees it first, with late duties counted.
   await org.getByRole("link", { name: "Go to the command centre" }).click();
+
+  // People and roles: rename the lead role, then make the participant a lead.
+  await org.getByRole("link", { name: "People", exact: true }).click();
+  await expect(org.getByRole("heading", { level: 1, name: "People and roles" })).toBeVisible();
+  await org.getByLabel("Leads one team, handles that team's problems").fill("Hall In-charge");
+  await org.getByRole("button", { name: "Save role names" }).click();
+  await expect(org.getByText("Role names saved")).toBeVisible();
+  await org.getByLabel("Role for Ravi Kumar").selectOption({ label: "Hall In-charge" });
+  await expect(org.getByText("Ravi Kumar is now Hall In-charge")).toBeVisible();
+
+  // The new lead now sees their team's incident and responds to it.
+  await vol.reload();
+  await expect(vol.getByText("Hall In-charge", { exact: true })).toBeVisible();
+  await expect(vol.getByRole("heading", { name: "Incidents in your hall team" })).toBeVisible();
+  await vol.getByRole("button", { name: "I'm on it" }).click();
+  await expect(vol.getByText(/being handled/)).toBeVisible();
+
+  await org.getByRole("link", { name: "Back to the command centre" }).click();
+  await expect(org.getByText(/being handled/).first()).toBeVisible();
   const problem = org
     .getByRole("listitem")
     .filter({ hasText: "Two candidates without hall tickets" })
