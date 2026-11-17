@@ -60,6 +60,12 @@ export function CommandView({ data, renderedAt }: { data: CommandData; renderedA
             {terms.tasks}
           </Link>
           <Link
+            href={`/app/ops/${data.operation.id}/issues`}
+            className={buttonClasses({ variant: "secondary" })}
+          >
+            {terms.issues}
+          </Link>
+          <Link
             href={`/app/ops/${data.operation.id}/people`}
             className={buttonClasses({ variant: "secondary" })}
           >
