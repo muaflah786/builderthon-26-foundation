@@ -18,7 +18,8 @@
     "db:migrate": "drizzle-kit migrate",
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
-    "db:seed": "node --env-file-if-exists=.env.local --import tsx src/server/db/seed.ts"
+    "db:seed": "node --env-file-if-exists=.env.local --import tsx src/server/db/seed.ts",
+    "new-resource": "node scripts/new-resource.mjs"
   },
   "dependencies": {
     "@libsql/client": "^0.18.0",
