@@ -95,5 +95,5 @@ Keep this table current; it is how the frontend knows what exists.
 | ---------------- | ----------------- | ----------- | --------------------- | ----------- |
 | GET              | `/api/health`     | public      | Core                  | ✅ verified |
 | *                | `/api/auth/*`     | public      | T1 Auth (Better Auth) | ✅ verified |
-| GET/POST         | `/api/items`      | user        | T3 Reference resource | ⏳ pending  |
-| GET/PATCH/DELETE | `/api/items/[id]` | owner/admin | T3                    | ⏳ pending  |
+| GET/POST         | `/api/items`      | user        | T3 Reference resource | ✅ verified |
+| GET/PATCH/DELETE | `/api/items/[id]` | owner/admin | T3                    | ✅ verified |
