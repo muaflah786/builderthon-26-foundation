@@ -10,6 +10,18 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: { default: siteConfig.name, template: `%s · ${siteConfig.name}` },
   description: siteConfig.description,
+  applicationName: siteConfig.name,
+  openGraph: {
+    title: `${siteConfig.name}: One platform. Every situation.`,
+    description: siteConfig.description,
+    siteName: siteConfig.name,
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: `${siteConfig.name}: One platform. Every situation.`,
+    description: siteConfig.description,
+  },
 };
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {

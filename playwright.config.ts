@@ -43,7 +43,7 @@ export default defineConfig({
       AUTH_RATE_LIMIT: "off",
       // No AI provider in E2E (overrides any AI_PROVIDER in .env.local): UI tests script the stream.
       AI_PROVIDER: "",
-      NEXT_PUBLIC_APP_NAME: "Builderthon App",
+      NEXT_PUBLIC_APP_NAME: "ORDOX",
     },
   },
 });

@@ -19,7 +19,10 @@ export default function HomePage() {
         <p className="text-primary text-sm font-semibold tracking-wide uppercase">
           One platform. Every situation.
         </p>
-        <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">{siteConfig.name}</h1>
+        <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl">{siteConfig.name}</h1>
+        <p className="text-2xl font-semibold tracking-tight sm:text-3xl">
+          One platform. <span className="text-primary">Every situation.</span>
+        </p>
         <p className="text-muted-foreground text-lg">
           Organize any one-day operation in minutes. Nobody needs training: everyone opens one link
           and sees exactly what to do.

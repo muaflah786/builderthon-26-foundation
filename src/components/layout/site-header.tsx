@@ -7,6 +7,7 @@ import type { siteConfig } from "@/config/site";
 import type { SessionUser } from "@/types/auth";
 import { cn } from "@/lib/utils";
 import { buttonClasses } from "@/components/ui/button";
+import { Wordmark } from "@/components/layout/wordmark";
 
 export type NavItems = typeof siteConfig.nav;
 
@@ -82,8 +83,8 @@ export function SiteHeader({ appName, user, nav, userMenu }: SiteHeaderProps) {
   return (
     <header className="border-border bg-background border-b">
       <div className="mx-auto flex h-14 w-full max-w-6xl items-center justify-between gap-4 px-4">
-        <Link href="/" className="truncate text-base font-semibold">
-          {appName}
+        <Link href="/" aria-label={`${appName} home`} className="flex items-center gap-2">
+          <Wordmark name={appName} />
         </Link>
         <nav aria-label="Main" className="hidden flex-1 md:block">
           {links("row")}
