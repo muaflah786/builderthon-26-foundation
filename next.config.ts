@@ -14,6 +14,12 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  // Assistant knowledge Markdown is read at runtime: ship it with the serverless functions.
+  outputFileTracingIncludes: {
+    "/api/assistant/*": ["./content/assistant/**/*"],
+    "/demo/*": ["./content/assistant/**/*"],
+    "/demo/**/*": ["./content/assistant/**/*"],
+  },
   // Cache Components is deliberately OFF: classic dynamic rendering is easier to
   // reason about under competition time pressure. See docs/ARCHITECTURE.md.
   cacheComponents: false,

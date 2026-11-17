@@ -31,23 +31,24 @@ npm run dev             # http://localhost:3000  ·  health: /api/health
 
 ## Documentation
 
-| Doc                                                                                 | Read when                                               |
-| ----------------------------------------------------------------------------------- | ------------------------------------------------------- |
-| [QUICKSTART](docs/QUICKSTART.md)                                                    | **Competition day: the one-page plan**                  |
-| [Prompt library](docs/prompts/README.md)                                            | 10 ready-to-paste Claude prompts                        |
-| [COMPETITION_ADAPTATION_GUIDE](docs/COMPETITION_ADAPTATION_GUIDE.md)                | the problem statement has arrived: adapt the foundation |
-| [ARCHITECTURE](docs/ARCHITECTURE.md)                                                | understanding the layers and folders                    |
-| [MODULE_CONTRACTS](docs/MODULE_CONTRACTS.md)                                        | before using or changing a shared interface             |
-| [API_GUIDE](docs/API_GUIDE.md)                                                      | writing or calling an `/api` route                      |
-| [DATABASE_GUIDE](docs/DATABASE_GUIDE.md)                                            | adding tables, migrations, seeds                        |
-| [TESTING_GUIDE](docs/TESTING_GUIDE.md)                                              | writing tests                                           |
-| [SECURITY_CHECKLIST](docs/SECURITY_CHECKLIST.md)                                    | before merging / deploying                              |
-| [TASK_OWNERSHIP](docs/TASK_OWNERSHIP.md) + [docs/tasks/](docs/tasks/)               | running parallel task conversations                     |
-| [WINDOWS_SETUP](docs/WINDOWS_SETUP.md)                                              | installing tools on a new laptop                        |
-| [ENVIRONMENT](docs/ENVIRONMENT.md)                                                  | environment variables and external services             |
-| [DEPLOYMENT](docs/DEPLOYMENT.md)                                                    | deploying (Vercel + Turso, Node host)                   |
-| [TEST_REPORT](docs/TEST_REPORT.md) / [KNOWN_LIMITATIONS](docs/KNOWN_LIMITATIONS.md) | what is verified, what isn't, contingency plans         |
-| [INTEGRATION_STATUS](docs/INTEGRATION_STATUS.md)                                    | what is verified right now                              |
+| Doc                                                                                 | Read when                                                                     |
+| ----------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| [QUICKSTART](docs/QUICKSTART.md)                                                    | **Competition day: the one-page plan**                                        |
+| [Prompt library](docs/prompts/README.md)                                            | 10 ready-to-paste Claude prompts                                              |
+| [COMPETITION_ADAPTATION_GUIDE](docs/COMPETITION_ADAPTATION_GUIDE.md)                | the problem statement has arrived: adapt the foundation                       |
+| [T6 AI assistant](docs/T6_ARCHITECTURE.md)                                          | the website AI assistant (setup, providers, knowledge, integration, security) |
+| [ARCHITECTURE](docs/ARCHITECTURE.md)                                                | understanding the layers and folders                                          |
+| [MODULE_CONTRACTS](docs/MODULE_CONTRACTS.md)                                        | before using or changing a shared interface                                   |
+| [API_GUIDE](docs/API_GUIDE.md)                                                      | writing or calling an `/api` route                                            |
+| [DATABASE_GUIDE](docs/DATABASE_GUIDE.md)                                            | adding tables, migrations, seeds                                              |
+| [TESTING_GUIDE](docs/TESTING_GUIDE.md)                                              | writing tests                                                                 |
+| [SECURITY_CHECKLIST](docs/SECURITY_CHECKLIST.md)                                    | before merging / deploying                                                    |
+| [TASK_OWNERSHIP](docs/TASK_OWNERSHIP.md) + [docs/tasks/](docs/tasks/)               | running parallel task conversations                                           |
+| [WINDOWS_SETUP](docs/WINDOWS_SETUP.md)                                              | installing tools on a new laptop                                              |
+| [ENVIRONMENT](docs/ENVIRONMENT.md)                                                  | environment variables and external services                                   |
+| [DEPLOYMENT](docs/DEPLOYMENT.md)                                                    | deploying (Vercel + Turso, Node host)                                         |
+| [TEST_REPORT](docs/TEST_REPORT.md) / [KNOWN_LIMITATIONS](docs/KNOWN_LIMITATIONS.md) | what is verified, what isn't, contingency plans                               |
+| [INTEGRATION_STATUS](docs/INTEGRATION_STATUS.md)                                    | what is verified right now                                                    |
 
 ## What's included
 

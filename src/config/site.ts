@@ -10,6 +10,7 @@ export const siteConfig = {
     { href: "/", label: "Home", auth: false },
     { href: "/app", label: "App", auth: true },
     { href: "/app/items", label: "Items", auth: true },
+    { href: "/demo", label: "AI demo", auth: false },
   ] as Array<{
     href: string;
     label: string;

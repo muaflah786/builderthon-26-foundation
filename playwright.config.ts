@@ -41,6 +41,8 @@ export default defineConfig({
       BETTER_AUTH_SECRET: "e2e-only-secret-not-used-anywhere-else-0123456789",
       // E2E signs up many users from one IP; the rate limiter is unit-tested instead.
       AUTH_RATE_LIMIT: "off",
+      // No AI provider in E2E (overrides any AI_PROVIDER in .env.local): UI tests script the stream.
+      AI_PROVIDER: "",
       NEXT_PUBLIC_APP_NAME: "Builderthon App",
     },
   },

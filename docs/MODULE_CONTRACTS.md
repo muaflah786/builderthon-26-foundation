@@ -83,6 +83,18 @@ Users table: Better Auth's `user` table plus `role` (`"user" | "admin"`, default
 | Resource generator  | `scripts/new-resource.mjs`                     | `npm run new-resource -- <singular> <plural>`.                                                                                 |
 | UI page conventions | `src/app/layout.tsx`, `src/app/app/layout.tsx` | Pages render inside AppShell's `<main>`; never add another `<main>`. Protected pages live under `src/app/app/`.                |
 
+## T6 Universal Website AI Assistant (implemented on `task/universal-ai-assistant`)
+
+| Contract        | File                                                                                  |
+| --------------- | ------------------------------------------------------------------------------------- |
+| Widget          | `AssistantWidget({ config: AssistantClientConfig })` from `@/components/assistant`    |
+| Site definition | `AssistantSiteDefinition` registered in `src/server/assistant/sites.ts`               |
+| Knowledge       | `WebsiteKnowledgeConfig` + `content/assistant/<site>/*.md`; `Retriever` interface     |
+| Providers       | `AiProvider` (`stream`, `health`), `resolveProvider()` (one provider, no fallback)    |
+| Wire format     | `POST /api/assistant/chat` → NDJSON `ChatStreamEvent` (`meta`/`delta`/`done`/`error`) |
+
+Details: `docs/T6_ARCHITECTURE.md`.
+
 ## Naming and code conventions
 
 - Files kebab-case; React components PascalCase; hooks `use-*.ts` exporting `useX`.
