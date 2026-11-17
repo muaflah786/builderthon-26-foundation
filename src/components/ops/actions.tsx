@@ -182,7 +182,7 @@ export function ReportProblem({
   return (
     <form
       onSubmit={onSubmit}
-      className="border-danger/40 flex flex-col gap-3 rounded-lg border p-4"
+      className="border-danger/40 flex flex-col gap-3 rounded-2xl border p-4 shadow-sm"
       noValidate
     >
       <h3 className="font-semibold">Report {withArticle(issueWord)}</h3>

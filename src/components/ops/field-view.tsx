@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { AutoRefresh, IssueButtons, ReportProblem, TaskButtons } from "@/components/ops/actions";
+import { LocationPanel } from "@/components/ops/location-panel";
 import { Badge } from "@/components/ui/badge";
 import { buttonClasses } from "@/components/ui/button";
 import { withArticle } from "@/lib/ops/terms";
@@ -15,7 +16,7 @@ function TaskCard({ task, data, mine }: { task: TaskView; data: FieldData; mine:
   const { terms } = data.operation.config;
   const late = task.dueAt && task.dueAt < new Date() && task.status !== "done";
   return (
-    <li className="border-border flex flex-col gap-3 rounded-lg border p-4">
+    <li className="border-border flex flex-col gap-3 rounded-2xl border p-4 shadow-sm">
       <div className="flex flex-wrap items-start justify-between gap-2">
         <Link
           href={`/app/ops/${data.operation.id}/tasks/${task.id}`}
@@ -145,7 +146,7 @@ export function FieldView({ data }: { data: FieldData }) {
             {data.teamIssues.map((i) => (
               <li
                 key={i.id}
-                className={`flex flex-col gap-2 rounded-lg border p-4 ${i.severity === "urgent" ? "border-danger" : "border-border"}`}
+                className={`flex flex-col gap-2 rounded-2xl border p-4 shadow-sm ${i.severity === "urgent" ? "border-danger" : "border-border"}`}
               >
                 <p className="font-medium">
                   {i.severity === "urgent" ? (
@@ -202,6 +203,12 @@ export function FieldView({ data }: { data: FieldData }) {
         ) : null}
       </section>
 
+      <LocationPanel
+        operationId={data.operation.id}
+        title={`Where my ${terms.team.toLowerCase()} is`}
+        canShare={data.operation.status === "live"}
+      />
+
       <section aria-labelledby="my-team" className="flex flex-col gap-2">
         <h2 id="my-team" className="text-lg font-semibold">
           My {terms.team}
@@ -224,7 +231,7 @@ export function FieldView({ data }: { data: FieldData }) {
         ) : (
           <p className="text-muted-foreground text-sm">Not in a {terms.team.toLowerCase()} yet.</p>
         )}
-        <div className="border-border mt-2 rounded-lg border p-3 text-sm">
+        <div className="border-border bg-background mt-2 rounded-2xl border p-4 text-sm shadow-sm">
           <p className="font-medium">Need help?</p>
           <p className="text-muted-foreground">
             Ask{" "}

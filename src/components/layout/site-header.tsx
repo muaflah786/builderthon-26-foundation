@@ -7,6 +7,7 @@ import type { siteConfig } from "@/config/site";
 import type { SessionUser } from "@/types/auth";
 import { cn } from "@/lib/utils";
 import { buttonClasses } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { Wordmark } from "@/components/layout/wordmark";
 
 export type NavItems = typeof siteConfig.nav;
@@ -89,7 +90,10 @@ export function SiteHeader({ appName, user, nav, userMenu }: SiteHeaderProps) {
         <nav aria-label="Main" className="hidden flex-1 md:block">
           {links("row")}
         </nav>
-        <div className="hidden md:block">{account}</div>
+        <div className="ml-auto flex items-center gap-2 md:ml-0">
+          <ThemeToggle />
+          <div className="hidden md:block">{account}</div>
+        </div>
         <button
           type="button"
           className="text-foreground hover:bg-muted rounded-md p-2 md:hidden"

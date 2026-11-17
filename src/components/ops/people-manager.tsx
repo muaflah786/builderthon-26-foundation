@@ -188,7 +188,7 @@ export function PeopleManager({
         <h2 id="people" className="text-lg font-semibold">
           Everyone ({people.length})
         </h2>
-        <ul className="divide-border border-border divide-y rounded-lg border">
+        <ul className="divide-border border-border bg-background divide-y rounded-2xl border shadow-sm">
           {people.map((p) => (
             <PersonRow
               key={p.id}

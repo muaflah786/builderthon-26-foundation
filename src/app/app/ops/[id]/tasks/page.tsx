@@ -172,7 +172,7 @@ export default async function TasksPage({
           }
         />
       ) : (
-        <ul className="divide-border border-border divide-y rounded-lg border">
+        <ul className="divide-border border-border bg-background divide-y rounded-2xl border shadow-sm">
           {data.rows.map((t) => (
             <li key={t.id}>
               <Link

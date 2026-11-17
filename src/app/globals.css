@@ -34,26 +34,26 @@
   --radius: 0.75rem;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-    --muted: #18181b;
-    --muted-foreground: #a1a1aa;
-    --border: #27272a;
-    --input: #71717a;
-    --primary: #fafafa;
-    --primary-foreground: #0a0a0a;
-    --brand: #fb923c;
-    --brand-soft: #2a1a10;
-    --danger: #dc2626;
-    --danger-foreground: #ffffff;
-    --success: #4ade80;
-    --success-foreground: #052e16;
-    --warning: #fbbf24;
-    --warning-foreground: #1c1917;
-    --ring: #fb923c;
-  }
+/* Dark theme: opt-in via the header toggle (data-theme="dark"); white is the default. */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --background: #0a0a0a;
+  --foreground: #ededed;
+  --muted: #18181b;
+  --muted-foreground: #a1a1aa;
+  --border: #27272a;
+  --input: #71717a;
+  --primary: #fafafa;
+  --primary-foreground: #0a0a0a;
+  --brand: #fb923c;
+  --brand-soft: #2a1a10;
+  --danger: #dc2626;
+  --danger-foreground: #ffffff;
+  --success: #4ade80;
+  --success-foreground: #052e16;
+  --warning: #fbbf24;
+  --warning-foreground: #1c1917;
+  --ring: #fb923c;
 }
 
 @theme inline {
@@ -84,7 +84,7 @@
 }
 
 :root {
-  color-scheme: light dark;
+  color-scheme: light;
 }
 
 body {

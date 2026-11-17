@@ -118,7 +118,7 @@ export default async function SummaryPage({
           <h2 id="by-team" className="text-lg font-semibold">
             By {terms.team.toLowerCase()}
           </h2>
-          <ul className="divide-border border-border divide-y rounded-lg border text-sm">
+          <ul className="divide-border border-border bg-background divide-y rounded-2xl border text-sm shadow-sm">
             {s.teams.map((t) => (
               <li key={t.id} className="flex items-center justify-between gap-4 p-3">
                 <span>

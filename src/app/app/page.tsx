@@ -38,7 +38,7 @@ export default async function AppHomePage() {
           }
         />
       ) : (
-        <ul className="divide-border border-border divide-y rounded-lg border">
+        <ul className="divide-border border-border bg-background divide-y rounded-2xl border shadow-sm">
           {ops.map((op) => (
             <li key={op.id}>
               <Link

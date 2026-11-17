@@ -1,4 +1,4 @@
-import { index, integer, sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core";
+import { index, integer, real, sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core";
 import {
   ISSUE_STATUSES,
   PERMISSION_LEVELS,
@@ -192,3 +192,31 @@ export type OpsLocation = typeof opsLocations.$inferSelect;
 export type OpsTask = typeof opsTasks.$inferSelect;
 export type OpsIssue = typeof opsIssues.$inferSelect;
 export type OpsActivity = typeof opsActivity.$inferSelect;
+
+/**
+ * Last shared position per member. Exists only while the member has chosen to
+ * share; "Stop sharing" deletes the row. Real device coordinates only.
+ */
+export const opsPositions = sqliteTable(
+  "ops_positions",
+  {
+    id: idColumn(),
+    operationId: text("operation_id")
+      .notNull()
+      .references(() => operations.id, { onDelete: "cascade" }),
+    memberId: text("member_id")
+      .notNull()
+      .references(() => opsMembers.id, { onDelete: "cascade" }),
+    lat: real("lat").notNull(),
+    lng: real("lng").notNull(),
+    /** Accuracy radius in metres, as reported by the device. */
+    accuracy: real("accuracy"),
+    ...timestamps(),
+  },
+  (t) => [
+    uniqueIndex("ops_positions_member_idx").on(t.memberId),
+    index("ops_positions_op_idx").on(t.operationId),
+  ],
+);
+
+export type OpsPosition = typeof opsPositions.$inferSelect;

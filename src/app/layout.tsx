@@ -30,7 +30,15 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   const user = await getSessionUser();
 
   return (
-    <html lang="en" className="h-full antialiased">
+    <html lang="en" className="h-full antialiased" suppressHydrationWarning>
+      <head>
+        <script
+          // Applies the saved theme before first paint (light by default).
+          dangerouslySetInnerHTML={{
+            __html: `try{if(localStorage.getItem("ordox-theme")==="dark")document.documentElement.dataset.theme="dark"}catch(e){}`,
+          }}
+        />
+      </head>
       <body className="flex min-h-full flex-col">
         <ToastProvider>
           <AppShell user={user} nav={siteConfig.nav} userMenu={user ? <SignOutButton /> : null}>

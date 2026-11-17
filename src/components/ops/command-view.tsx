@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { AutoRefresh, IssueButtons } from "@/components/ops/actions";
 import { Icon } from "@/components/ops/icons";
+import { LocationPanel } from "@/components/ops/location-panel";
 import { Badge } from "@/components/ui/badge";
 import { buttonClasses } from "@/components/ui/button";
 import { canClose } from "@/lib/ops/permissions";
@@ -162,7 +163,7 @@ export function CommandView({ data, renderedAt }: { data: CommandData; renderedA
             {data.openIssues.map((i) => (
               <li
                 key={i.id}
-                className={`flex flex-col gap-2 rounded-lg border p-4 sm:flex-row sm:items-center sm:justify-between ${i.severity === "urgent" ? "border-danger" : "border-border"}`}
+                className={`flex flex-col gap-2 rounded-2xl border p-4 shadow-sm sm:flex-row sm:items-center sm:justify-between ${i.severity === "urgent" ? "border-danger" : "border-border"}`}
               >
                 <div>
                   <p className="font-medium">
@@ -215,12 +216,14 @@ export function CommandView({ data, renderedAt }: { data: CommandData; renderedA
         ) : null}
       </section>
 
+      <LocationPanel operationId={data.operation.id} title="Live locations" canShare={live} />
+
       <div className="grid gap-8 lg:grid-cols-[3fr_2fr]">
         <section aria-labelledby="teams" className="flex flex-col gap-3">
           <h2 id="teams" className="text-lg font-semibold">
             {terms.teams}
           </h2>
-          <ul className="divide-border border-border divide-y rounded-lg border">
+          <ul className="divide-border border-border bg-background divide-y rounded-2xl border shadow-sm">
             {data.teams.map((t) => (
               <li key={t.id} className="flex items-center justify-between gap-4 p-3 text-sm">
                 <div>
