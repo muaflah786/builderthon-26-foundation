@@ -9,6 +9,7 @@ export const siteConfig = {
   nav: [
     { href: "/", label: "Home", auth: false },
     { href: "/app", label: "App", auth: true },
+    { href: "/app/items", label: "Items", auth: true },
   ] as Array<{
     href: string;
     label: string;

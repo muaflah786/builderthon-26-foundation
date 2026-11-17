@@ -8,11 +8,14 @@
  */
 import { sql } from "drizzle-orm";
 import { db, libsqlClient, type Db } from "./client";
+import { DEMO_USER, seedDemoUser } from "./seeds/demo-user";
+import { seedItems } from "./seeds/items";
 
 type Seeder = { name: string; run: (db: Db) => Promise<void> };
 
 const seeders: Seeder[] = [
-  // { name: "things", run: seedThings },
+  { name: "demo user", run: seedDemoUser },
+  { name: "items", run: seedItems },
 ];
 
 async function main() {
@@ -26,6 +29,7 @@ async function main() {
     await seeder.run(db);
     console.log(`✓ Seeded ${seeder.name}`);
   }
+  console.log(`Demo login: ${DEMO_USER.email} / ${DEMO_USER.password}`);
 }
 
 main()
