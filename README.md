@@ -57,4 +57,4 @@ A sample product built from it lives on branch `sample/notes-app`.
 
 ## Status
 
-All modules are merged and verified locally: 149 unit/integration tests, 14 browser tests, production build. Vercel/Turso deployment and GitHub CI still need the team's accounts. See [INTEGRATION_STATUS](docs/INTEGRATION_STATUS.md).
+All modules are merged and verified: 149 unit/integration tests, 14 browser tests, CI on GitHub, and a live production deployment (Vercel + Turso, Mumbai). See [DEPLOYMENT_REPORT](docs/DEPLOYMENT_REPORT.md) and [INTEGRATION_STATUS](docs/INTEGRATION_STATUS.md).

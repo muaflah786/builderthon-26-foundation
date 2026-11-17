@@ -38,13 +38,14 @@ Every result below was produced by actually running the command on this machine.
 | `items.spec.ts` (3) | create → list → search → edit → validation error → delete; other user's item shows not-found UI and API returns 404; search works with JavaScript disabled                                                       |
 | `smoke.spec.ts` (4) | home page; health; unknown route 404; no overflow at 360px                                                                                                                                                       |
 
+## Production (2026-11-17)
+
+Deployed and verified at https://builderthon-26-foundation.vercel.app: GitHub Actions (check + 14/14 E2E on Linux), Turso connectivity, sign-up, protected routes, create/search/edit/delete, persistence, user isolation (404), sign-out, 0 runtime errors. Details: [DEPLOYMENT_REPORT.md](DEPLOYMENT_REPORT.md).
+
 ## Not verified (needs accounts or credentials)
 
 | Item                                | Why                                                              |
 | ----------------------------------- | ---------------------------------------------------------------- |
-| Turso remote DB (`libsql://`)       | no Turso account/token yet                                       |
-| Vercel deployment                   | no Vercel account / GitHub remote yet                            |
-| GitHub Actions CI                   | no remote repository; the YAML has never run on GitHub           |
 | S3/R2 uploads against a real bucket | no credentials (signing is verified against the AWS test vector) |
 
 ## Dependency audit

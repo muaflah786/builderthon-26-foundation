@@ -2,7 +2,7 @@
 
 > Maintained by the coordinator. Every ✅ was checked by running the command shown (details: [TEST_REPORT.md](TEST_REPORT.md)). ⚪ = not verified, with the reason.
 
-**Overall: the foundation is complete on `main` and verified locally.** Remaining items need external accounts (Vercel, Turso, GitHub) and are listed under "Remaining work".
+**Overall: the foundation is complete, deployed and verified in production** at https://builderthon-26-foundation.vercel.app (see [DEPLOYMENT_REPORT.md](DEPLOYMENT_REPORT.md)).
 
 ## Environment (inspected 2026-11-17)
 
@@ -44,9 +44,9 @@
 | API contracts ↔ frontend usage                                  | ✅ items UI uses `apiFetch` + envelope; E2E covers create/edit/delete/search                 |
 | Auth + authorization                                            | ✅ sign-up/in/out, role not self-assignable, origin check, `/app` protection, cross-user 404 |
 | Env vars documented                                             | ✅ [ENVIRONMENT.md](ENVIRONMENT.md)                                                          |
-| Deployment reproducible                                         | ✅ Node-host path locally · ⚪ Vercel + Turso (no accounts)                                  |
-| Remote DB (Turso)                                               | ⚪ no credentials                                                                            |
-| GitHub Actions CI                                               | ⚪ no remote                                                                                 |
+| Deployment reproducible                                         | ✅ Vercel + Turso deployed 2026-11-17 (DEPLOYMENT_REPORT §6)                                 |
+| Remote DB (Turso)                                               | ✅ Mumbai, migrations applied, production CRUD verified                                      |
+| GitHub Actions CI                                               | ✅ run #44025346450: check + e2e (14/14) passed                                              |
 | S3/R2 uploads                                                   | ⚪ no credentials (signer verified against the AWS vector)                                   |
 
 ## Integration decisions log
@@ -67,8 +67,9 @@
 - Two extra worktrees under `.claude/worktrees/` (`claude/isolated-worktree-setup-a4d18b`, `claude/t2-ui-components-40c4cd`) point at the old commit `8393850` and contain no changes. They were left untouched; remove them only if nobody is using them.
 - A `next dev` server from `bt-t1` was found running on port 3000 during integration. It was left running. Stop it before using port 3000.
 
-## Remaining work (needs the team's accounts)
+## Remaining work
 
-1. Create a GitHub repo, push `main`, and confirm the CI workflow passes.
-2. Create Turso DB + Vercel project; run the full rehearsal deploy in [DEPLOYMENT.md](DEPLOYMENT.md); mark those rows ✅.
-3. Optional: test R2 uploads once with real credentials.
+1. **Rotate the Turso token** (it was exposed in a chat): DEPLOYMENT_REPORT §5 #1.
+2. Set the database env vars to **Production only** before pushing any non-`main` branch (preview deploys would write to production).
+3. Enable 2FA on the Vercel and GitHub accounts.
+4. Optional: test R2 uploads once with real credentials.

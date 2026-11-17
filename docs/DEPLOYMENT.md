@@ -1,6 +1,8 @@
 # Deployment
 
-Legend: ✅ verified on the coordinator's machine · ⚪ UNTESTED (needs an account/credentials we don't have yet)
+Legend: ✅ verified · ⚪ UNTESTED
+
+> **Option A was rehearsed for real on 2026-11-17.** Follow the tested, step-by-step version in [DEPLOYMENT_REPORT.md §6](DEPLOYMENT_REPORT.md). It also covers the Mumbai function region and the `.env.turso`/`.env.vercel` approach that keeps tokens out of chats and Git.
 
 ## Pre-deploy checklist (every time)
 
