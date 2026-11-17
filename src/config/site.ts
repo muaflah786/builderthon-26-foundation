@@ -6,7 +6,10 @@ export const siteConfig = {
   name: process.env.NEXT_PUBLIC_APP_NAME ?? "Builderthon App",
   description: "A reusable full-stack foundation for DARUL HUDA SIBĀQ'26 Builderthon.",
   /** Top-level navigation. `auth: true` items are shown only to signed-in users. */
-  nav: [{ href: "/", label: "Home", auth: false }] as Array<{
+  nav: [
+    { href: "/", label: "Home", auth: false },
+    { href: "/app", label: "App", auth: true },
+  ] as Array<{
     href: string;
     label: string;
     auth: boolean;

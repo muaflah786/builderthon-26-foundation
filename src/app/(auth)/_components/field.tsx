@@ -1,5 +1,8 @@
 import type { ComponentProps } from "react";
-import { cn } from "@/lib/utils";
+import { FormError } from "@/components/forms/form-error";
+import { FormField } from "@/components/forms/form-field";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 type FieldProps = ComponentProps<"input"> & {
   name: string;
@@ -7,59 +10,24 @@ type FieldProps = ComponentProps<"input"> & {
   errors?: string[];
 };
 
-/**
- * Minimal labelled input with an accessible error message. Kept deliberately plain:
- * the coordinator swaps in T2's FormField/Input at integration.
- */
-export function Field({ name, label, errors, className, ...props }: FieldProps) {
-  const id = `field-${name}`;
-  const errorId = `${id}-error`;
-  const error = errors?.[0];
+/** Labelled input with an accessible error message (T2 FormField + Input). */
+export function Field({ name, label, errors, ...props }: FieldProps) {
   return (
-    <div className="flex flex-col gap-1.5">
-      <label htmlFor={id} className="text-sm font-medium">
-        {label}
-      </label>
-      <input
-        id={id}
-        name={name}
-        aria-invalid={error ? true : undefined}
-        aria-describedby={error ? errorId : undefined}
-        className={cn(
-          "border-border bg-background focus-visible:ring-primary rounded-md border px-3 py-2 text-sm outline-none focus-visible:ring-2 disabled:opacity-60",
-          error && "border-danger",
-          className,
-        )}
-        {...props}
-      />
-      {error ? (
-        <p id={errorId} className="text-danger text-sm">
-          {error}
-        </p>
-      ) : null}
-    </div>
+    <FormField label={label} name={name} error={errors}>
+      <Input {...props} />
+    </FormField>
   );
 }
 
 export function FormAlert({ message }: { message: string | null }) {
-  if (!message) return null;
-  return (
-    <p role="alert" className="border-danger text-danger rounded-md border px-3 py-2 text-sm">
-      {message}
-    </p>
-  );
+  return <FormError message={message} />;
 }
 
 export function SubmitButton({ pending, children }: { pending: boolean; children: string }) {
   return (
-    <button
-      type="submit"
-      disabled={pending}
-      aria-busy={pending}
-      className="bg-primary text-primary-foreground rounded-md px-4 py-2 text-sm font-medium disabled:opacity-60"
-    >
-      {pending ? "Please wait…" : children}
-    </button>
+    <Button type="submit" loading={pending} className="w-full">
+      {children}
+    </Button>
   );
 }
 

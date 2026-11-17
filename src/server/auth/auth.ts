@@ -29,7 +29,7 @@ export const auth = betterAuth({
   },
   // Built-in limiter. Storage is in-memory, so limits are per server instance.
   rateLimit: {
-    enabled: true,
+    enabled: env.AUTH_RATE_LIMIT === "on",
     window: 60,
     max: 100,
     customRules: {

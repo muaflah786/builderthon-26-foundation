@@ -1,5 +1,9 @@
 import type { Metadata } from "next";
+import { SignOutButton } from "@/app/(auth)/_components/sign-out-button";
+import { AppShell } from "@/components/layout/app-shell";
+import { ToastProvider } from "@/components/ui/toast";
 import { siteConfig } from "@/config/site";
+import { getSessionUser } from "@/server/auth/session";
 import "./globals.css";
 
 // System font stack (see globals.css) — no build-time font download, so builds work offline.
@@ -8,10 +12,20 @@ export const metadata: Metadata = {
   description: siteConfig.description,
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  // Reading the session makes every page dynamic. That is intended: the header
+  // always shows the real signed-in state. getSessionUser is cached per request.
+  const user = await getSessionUser();
+
   return (
     <html lang="en" className="h-full antialiased">
-      <body className="flex min-h-full flex-col">{children}</body>
+      <body className="flex min-h-full flex-col">
+        <ToastProvider>
+          <AppShell user={user} nav={siteConfig.nav} userMenu={user ? <SignOutButton /> : null}>
+            {children}
+          </AppShell>
+        </ToastProvider>
+      </body>
     </html>
   );
 }
