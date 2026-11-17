@@ -8,6 +8,7 @@ export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
+      "@tests": r("./tests"),
       "@": r("./src"),
       // "server-only" throws outside the React server runtime; tests run in plain Node.
       "server-only": r("./tests/stubs/server-only.ts"),
