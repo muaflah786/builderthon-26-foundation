@@ -14,6 +14,8 @@ export const ERROR_STATUS = {
   VALIDATION_ERROR: 422,
   RATE_LIMITED: 429,
   INTERNAL_ERROR: 500,
+  /** A required external service (e.g. the AI provider) is not configured or unavailable. */
+  SERVICE_UNAVAILABLE: 503,
 } as const;
 
 export type ErrorCode = keyof typeof ERROR_STATUS;

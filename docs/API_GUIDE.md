@@ -91,9 +91,11 @@ Server components do **not** call `/api/*` over HTTP. They call the service func
 
 Keep this table current; it is how the frontend knows what exists.
 
-| Method           | Path              | Auth        | Module                | Status      |
-| ---------------- | ----------------- | ----------- | --------------------- | ----------- |
-| GET              | `/api/health`     | public      | Core                  | ✅ verified |
-| *                | `/api/auth/*`     | public      | T1 Auth (Better Auth) | ✅ verified |
-| GET/POST         | `/api/items`      | user        | T3 Reference resource | ✅ verified |
-| GET/PATCH/DELETE | `/api/items/[id]` | owner/admin | T3                    | ✅ verified |
+| Method           | Path                    | Auth                           | Module                | Status                                        |
+| ---------------- | ----------------------- | ------------------------------ | --------------------- | --------------------------------------------- |
+| GET              | `/api/health`           | public                         | Core                  | ✅ verified                                   |
+| *                | `/api/auth/*`           | public                         | T1 Auth (Better Auth) | ✅ verified                                   |
+| GET/POST         | `/api/items`            | user                           | T3 Reference resource | ✅ verified                                   |
+| GET/PATCH/DELETE | `/api/items/[id]`       | owner/admin                    | T3                    | ✅ verified                                   |
+| POST             | `/api/assistant/chat`   | public (origin + rate limited) | T6 Assistant          | ✅ streaming NDJSON, see T6_INTEGRATION_GUIDE |
+| GET              | `/api/assistant/status` | public (rate limited)          | T6 Assistant          | ✅ provider health, no inference              |
