@@ -1,5 +1,7 @@
 # Task Ownership
 
+> **Status 2026-11-17:** foundation tasks T1–T5 are complete and merged into `main` (see INTEGRATION_STATUS.md). For the competition, generate new tasks with [prompt 06](prompts/06-module-task-generation.md) and keep the rule "one owner per path".
+
 Each path has exactly **one** owner. Edit only paths your task owns. If you need a change elsewhere, write it under "Requests to coordinator" in your completion report.
 
 ## Waves
@@ -27,10 +29,10 @@ Wave 2 has 3 tasks, one per team member. Wave 3 has 2 tasks; the third person do
 | `src/lib/api/**`, `src/lib/errors.ts`, `src/lib/env.ts`, `src/lib/utils.ts`, `src/lib/validation/common.ts`, `src/types/**`, `src/server/db/client.ts`, `src/server/db/index.ts`, `src/server/db/columns.ts`, `src/server/db/seed.ts`, `src/config/site.ts`, `src/app/layout.tsx`, `src/app/api/health/**` | Coordinator                                  |
 | `src/server/auth/**`, `src/lib/auth-client.ts`, `src/app/api/auth/**`, `src/app/(auth)/**`, `src/proxy.ts`, `src/server/db/schema/auth.ts`, `src/lib/validation/auth.ts`, `tests/e2e/auth.spec.ts`                                                                                                         | **T1**                                       |
 | `src/components/ui/**`, `src/components/forms/**`, `src/components/layout/**`, `src/app/globals.css`, `src/app/page.tsx`, `src/app/not-found.tsx`, `src/app/error.tsx`, `src/app/global-error.tsx`, `src/app/loading.tsx`, `src/app/dev/ui/**` (component gallery)                                         | **T2**                                       |
-| `tests/helpers/**`, `tests/setup.ts`, `tests/stubs/**`, `vitest.config.mts`, `playwright.config.ts`, `tests/e2e/smoke.spec.ts`, `.github/workflows/**`                                                                                                                                                     | **T4**                                       |
+| `tests/helpers/**`, `tests/setup.ts`, `tests/stubs/**`, `vitest.config.mts`, `playwright.config.ts`, `tests/e2e/smoke.spec.ts`, `.github/workflows/**`, `tests/e2e/prepare-db.mjs`                                                                                                                         | **T4**                                       |
 | `src/server/db/schema/items.ts`, `src/server/db/seeds/items.ts`, `src/server/db/query-helpers.ts`, `src/server/services/items.ts`, `src/lib/validation/items.ts`, `src/app/api/items/**`, `src/app/app/items/**`, `src/components/items/**`, `tests/e2e/items.spec.ts`                                     | **T3**                                       |
-| `src/server/integrations/**`, `src/server/storage/**`, `src/server/security/**`, `src/app/api/uploads/**`, `docs/DEPLOYMENT.md`, `vercel.json`, `Dockerfile`, `.dockerignore`                                                                                                                              | **T5**                                       |
-| `src/app/app/layout.tsx`, `src/app/app/page.tsx` (protected area shell)                                                                                                                                                                                                                                    | Coordinator (wires T1 + T2 at Integration A) |
+| `src/server/integrations/**`, `src/server/storage/**`, `src/server/security/**`, `src/app/api/uploads/**`, `src/server/logger.ts`, `docs/DEPLOYMENT.md`                                                                                                                                                    | **T5**                                       |
+| `src/app/app/layout.tsx`, `src/app/app/page.tsx` (protected area shell), `scripts/**`, `docs/prompts/**`                                                                                                                                                                                                   | Coordinator (wires T1 + T2 at Integration A) |
 
 Tests (`*.test.ts`) live next to the file they test and belong to that file's owner.
 

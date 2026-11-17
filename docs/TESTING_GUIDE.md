@@ -6,7 +6,7 @@
 npm run check        # typecheck + lint + unit tests (run before every commit/PR)
 npm test             # Vitest once
 npm run test:watch   # Vitest watch mode
-npm run test:e2e     # Playwright (added by T4; needs `npx playwright install chromium` once)
+npm run test:e2e     # Playwright (run `npx playwright install chromium` once; stop `npm run dev` first)
 npm run build        # production build (run before every merge to main)
 ```
 
@@ -28,10 +28,15 @@ npm run build        # production build (run before every merge to main)
 - Route handlers that need a user: mock the session module (`vi.mock("@/server/auth/session", ...)`) using `tests/helpers/auth.ts` (T4).
 - No real network in unit tests. Mock `fetch` with `vi.spyOn(globalThis, "fetch")`.
 
-## Current coverage (Stage 1)
+## Helpers
 
-| Suite                              | Tests                                                                                       | Status     |
-| ---------------------------------- | ------------------------------------------------------------------------------------------- | ---------- |
-| `src/lib/api/server.test.ts`       | envelope helpers, `apiHandler` error mapping, `parseJson`, `parseQuery` + `listQuerySchema` | ✅ passing |
-| `src/lib/api/client.test.ts`       | `buildUrl`, `apiFetch` success/error/network, `apiFetchPage`                                | ✅ passing |
-| `src/app/api/health/route.test.ts` | health route against in-memory DB                                                           | ✅ passing |
+Copy-paste recipes: [docs/modules/t4-testing.md](modules/t4-testing.md).
+
+- `tests/helpers/db.ts`: `setupTestDb()` / `resetTestDb()` give each test file an isolated in-memory DB built from all schema files.
+- `tests/helpers/auth.ts`: `vi.mock("@/server/auth/session", async () => (await import("@tests/helpers/auth")).sessionModuleMock)`, then `mockSession(makeUser())`.
+- `tests/helpers/request.ts`: `callRoute(handler, jsonRequest(...), params)` → `{ status, body }`.
+- E2E runs a production build on port 3100 against `e2e.db`, which is recreated from committed migrations, with `AUTH_RATE_LIMIT=off`.
+
+## Current coverage
+
+25 unit/integration files (149 tests) and 3 Playwright specs (14 tests), all passing. Per-file breakdown: [TEST_REPORT.md](TEST_REPORT.md).

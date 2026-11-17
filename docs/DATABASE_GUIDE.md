@@ -17,6 +17,10 @@
 
 The Drizzle instance is created **without** a schema registry. Use the SQL-like builder (`db.select().from(items).where(...)`), not `db.query.items.findMany`. This keeps schema files independent of each other.
 
+Exception: the Better Auth tables (`user`, `session`, `account`, `verification`) are **singular**, because the auth adapter looks them up by those names. Reference users as `user.id` from `@/server/db/schema/auth`.
+
+Generic list helpers live in `src/server/db/query-helpers.ts`: `containsInsensitive` (escaped `LIKE`), `orderByFrom` (allow-listed sort) and `pageWindow`.
+
 ## Commands
 
 ```bash
@@ -24,7 +28,7 @@ npm run db:push       # DEV ONLY: sync local.db to the schema instantly (no migr
 npm run db:generate   # create a SQL migration in ./drizzle from schema changes
 npm run db:migrate    # apply pending migrations (use this in production)
 npm run db:studio     # browse data in the browser
-npm run db:seed       # run seeders (src/server/db/seed.ts)
+npm run db:seed       # demo user (demo@example.com / demo-password-123) + demo items; idempotent
 ```
 
 ## Workflow rules (important for parallel work)
@@ -32,7 +36,9 @@ npm run db:seed       # run seeders (src/server/db/seed.ts)
 1. **On task branches:** change your own schema file and run `npm run db:push`. **Do not commit anything in `drizzle/`.**
 2. **Coordinator, after merging:** run `npm run db:generate` once, review the SQL, and commit it. This gives one linear migration history with no numbering conflicts.
 3. **During the competition** (one shared branch): whoever changes the schema runs `db:generate` and commits the migration in the same commit as the schema change. Announce it to the team.
-4. If `local.db` gets into a bad state: delete it, then run `npm run db:migrate && npm run db:seed`.
+4. **Never drop one table and create another in the same `db:generate`.** drizzle-kit then asks interactively whether it is a rename, and crashes in non-interactive shells (Claude, CI). Generate the drop first, then the new tables.
+5. `db:push` asks for confirmation (strict mode). Run it only in a real terminal.
+6. If `local.db` gets into a bad state: delete it, then run `npm run db:migrate && npm run db:seed`.
 
 ## Seeding
 
@@ -50,4 +56,4 @@ const rows = await db
   .orderBy(desc(items.createdAt));
 ```
 
-Tests get an isolated in-memory DB (`DATABASE_URL=file::memory:` in vitest config). Use the test helper from T4 (`tests/helpers/db.ts`) to apply migrations to it.
+Tests get an isolated in-memory DB (`DATABASE_URL=file::memory:` in vitest config). Use `tests/helpers/db.ts` (`setupTestDb`/`resetTestDb`) to create the schema in it.

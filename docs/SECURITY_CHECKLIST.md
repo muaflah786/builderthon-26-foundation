@@ -17,27 +17,28 @@ Status: ✅ implemented and verified · 🟡 implemented, not yet verified · �
 
 ## Auth & authorization (T1, T3)
 
-| Check                                                                                    | Status                |
-| ---------------------------------------------------------------------------------------- | --------------------- |
-| Passwords hashed by Better Auth (scrypt); min length 8                                   | ⏳ T1                 |
-| Session cookies `HttpOnly`, `SameSite=Lax`, `Secure` in production                       | ⏳ T1                 |
-| Sign-in / sign-up rate-limited (Better Auth built-in)                                    | ⏳ T1                 |
-| Better Auth `trustedOrigins` = `APP_URL` (CSRF/origin check)                             | ⏳ T1                 |
-| `role` cannot be set from sign-up input                                                  | ⏳ T1 (test required) |
-| `?next=` redirect accepts only relative paths (no open redirect)                         | ⏳ T1 (test required) |
-| Every protected handler/service calls `requireUser`/`requireRole`; `proxy.ts` is UX only | ⏳ T1/T3              |
-| Owner-scoped queries: other users' resources → 404                                       | ⏳ T3 (test required) |
-| DTOs never include password hashes, tokens or other users' emails                        | ⏳ T1/T3              |
+| Check                                                                                    | Status                                                            |
+| ---------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
+| Passwords hashed by Better Auth (scrypt); min length 8                                   | ✅ scrypt, 8–128 chars                                            |
+| Session cookies `HttpOnly`, `SameSite=Lax`, `Secure` in production                       | ✅ HttpOnly + SameSite=Lax verified; Secure when APP_URL is https |
+| Sign-in / sign-up rate-limited (Better Auth built-in)                                    | ✅ in-memory, per instance                                        |
+| Better Auth `trustedOrigins` = `APP_URL` (CSRF/origin check)                             | ✅ foreign Origin → 403 (curl + unit test)                        |
+| `role` cannot be set from sign-up input                                                  | ✅ unit test + curl                                               |
+| `?next=` redirect accepts only relative paths (no open redirect)                         | ✅ unit + E2E                                                     |
+| Every protected handler/service calls `requireUser`/`requireRole`; `proxy.ts` is UX only | ✅ `/app` layout re-checks the session                            |
+| Owner-scoped queries: other users' resources → 404                                       | ✅ service, route and E2E tests                                   |
+| DTOs never include password hashes, tokens or other users' emails                        | ✅ `toSessionUser`, `ItemDto`                                     |
 
 ## Platform (T5)
 
 | Check                                                                                       | Status                                                                                   |
 | ------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
-| Rate limit helper for expensive/public endpoints                                            | ⏳ T5                                                                                    |
-| Uploads: size limit, MIME allow-list, random keys, no user-controlled paths, off by default | ⏳ T5                                                                                    |
-| Outbound HTTP: timeout, response validated with Zod, API keys only server-side              | ⏳ T5                                                                                    |
+| Rate limit helper for expensive/public endpoints                                            | ✅ `assertRateLimit` (uploads use it)                                                    |
+| Uploads: size limit, MIME allow-list, random keys, no user-controlled paths, off by default | ✅ plus magic-byte check and nosniff                                                     |
+| Outbound HTTP: timeout, response validated with Zod, API keys only server-side              | ✅ `fetchJson` (server-only)                                                             |
 | Content-Security-Policy with nonces                                                         | ➖ optional (Next inline scripts need nonce plumbing; enable via `proxy.ts` if required) |
-| `npm audit --omit=dev` clean before final submission                                        | ⏳ coordinator                                                                           |
+| Production refuses the placeholder `BETTER_AUTH_SECRET`                                     | ✅ verified (server refused to start)                                                    |
+| `npm audit --omit=dev` clean before final submission                                        | 🟡 4 moderate, dev-only (drizzle-kit's esbuild); see TEST_REPORT                         |
 
 ## Competition-day reminders
 

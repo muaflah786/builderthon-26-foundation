@@ -22,42 +22,50 @@ cp .env.example .env.local     # if not done
 - [ ] `src/app/page.tsx`: the real landing content.
 - [ ] Commit and push, so everyone pulls the same base.
 
-## Add a resource: copy the reference "items" slice (about 20 minutes per entity)
+## Add a resource: generate it from the reference "items" slice (about 15 minutes per entity)
 
-For a new entity `Task` (replace with your noun), copy and rename:
+Rehearsed end to end on branch `sample/notes-app` (docs/SAMPLE_APP.md there): all tests and E2E passed.
 
-| From                            | To                              |
-| ------------------------------- | ------------------------------- |
-| `src/server/db/schema/items.ts` | `src/server/db/schema/tasks.ts` |
-| `src/lib/validation/items.ts`   | `src/lib/validation/tasks.ts`   |
-| `src/server/services/items.ts`  | `src/server/services/tasks.ts`  |
-| `src/app/api/items/**`          | `src/app/api/tasks/**`          |
-| `src/app/app/items/**`          | `src/app/app/tasks/**`          |
-| `src/components/items/**`       | `src/components/tasks/**`       |
+**Step 1: not using "items"? Remove it first, in its own migration.**
+Delete `src/lib/validation/items*.ts`, `src/server/db/schema/items.ts`, `src/server/db/seeds/items.ts`, `src/server/services/items*.ts`, `src/app/api/items/`, `src/app/app/items/`, `src/components/items/`, `tests/e2e/items.spec.ts`. Also remove the "Items" nav entry in `src/config/site.ts` and the seeder lines in `src/server/db/seed.ts`. Then:
 
-Then:
+```bash
+npm run db:generate      # creates "DROP TABLE items" (no prompts)
+```
 
-1. Edit the fields in schema + validation (keep them in sync).
-2. `npm run db:generate && npm run db:migrate`, then commit the migration **with** the schema change.
-3. Adjust the service (filters, ownership rules), the list columns and the form fields.
-4. Add a nav entry in `src/config/site.ts`.
-5. `npm run check`.
+> ⚠️ Do the drop **before** generating new tables. If one `db:generate` both drops a table and creates another, drizzle-kit asks interactively whether it is a rename, and it crashes in non-interactive shells (Claude, CI).
 
-If the problem has no "items"-like entity, **delete** the items slice (the files in the table above, plus its seed registration and nav entry). Do not leave unused demo features.
+(Easiest alternative: keep "items" by generating your first resource _from_ it, then delete it at the end.)
+
+**Step 2: generate each resource.**
+
+```bash
+npm run new-resource -- task tasks      # <singular> <plural>, lowercase
+```
+
+It copies schema, validation, service, API routes, pages, components, seeder, unit tests and the E2E spec, renaming everything. It refuses to overwrite files and prints the two shared-file lines to add (nav entry + seeder registration).
+
+**Step 3: make it yours.**
+
+1. Edit fields in `src/server/db/schema/<plural>.ts` **and** `src/lib/validation/<plural>.ts` (keep them in sync), then the form (`src/components/<plural>/<singular>-form.tsx`), the list columns (`src/app/app/<plural>/page.tsx`) and the status badge if you changed statuses.
+2. Update the generated tests for the new fields/values (they encode the reference behaviour).
+3. `npm run db:generate && npm run db:migrate`. Commit the migration **with** the schema change.
+4. `npm run check` (and `npm run test:e2e` before integrating).
 
 ## Patterns cheat sheet
 
-| Need                               | Use                                                                   |
-| ---------------------------------- | --------------------------------------------------------------------- |
-| Public read-only page              | server component calling a service directly                           |
-| Protected page                     | put it under `src/app/app/` (layout already requires login)           |
-| Admin-only                         | `await requireRole("admin")` in the page/handler/service              |
-| Form → create/update               | `useApiForm` + `FormField` + shared Zod schema                        |
-| List with search/filter/pagination | copy items list page + `listQuerySchema(...).extend({...})`           |
-| Call a 3rd-party API               | `fetchJson` from `src/server/integrations/http.ts`, key in env        |
-| File upload                        | enable `STORAGE_DRIVER` (see `docs/DEPLOYMENT.md`)                    |
-| Expensive public endpoint          | `rateLimit(...)` from `src/server/security/rate-limit.ts`             |
-| Make a user admin                  | `npm run db:studio`, then set `user.role = "admin"` (or use the seed) |
+| Need                               | Use                                                            |
+| ---------------------------------- | -------------------------------------------------------------- |
+| Public read-only page              | server component calling a service directly                    |
+| Protected page                     | put it under `src/app/app/` (layout already requires login)    |
+| Admin-only                         | `await requireRole("admin")` in the page/handler/service       |
+| Form → create/update               | `useApiForm` + `FormField` + shared Zod schema                 |
+| List with search/filter/pagination | copy items list page + `listQuerySchema(...).extend({...})`    |
+| Call a 3rd-party API               | `fetchJson` from `src/server/integrations/http.ts`, key in env |
+| File upload                        | enable `STORAGE_DRIVER` (see `docs/DEPLOYMENT.md`)             |
+| Expensive public endpoint          | `rateLimit(...)` from `src/server/security/rate-limit.ts`      |
+| Make a user admin                  | `npm run db:studio`, then set `user.role = "admin"`            |
+| Demo login                         | `npm run db:seed` → `demo@example.com` / `demo-password-123`   |
 
 ## Team workflow during the competition
 

@@ -18,3 +18,6 @@ This repo is a reusable competition foundation coordinated across several conver
 4. Business logic and authorization belong in `src/server/services/`. Route handlers and pages stay thin.
 5. Never commit files in `drizzle/` from a task branch. Never commit `.env.local` or `*.db`.
 6. Run `npm run check` and `npm run build` before declaring work done. Report anything unverified as UNTESTED.
+7. New CRUD resource: run `npm run new-resource -- <singular> <plural>` instead of hand-writing it, then edit fields. Never drop one table and create another in the same `npm run db:generate` (drizzle-kit prompts interactively and crashes); generate them separately.
+8. Pages render inside the root AppShell's `<main>`: don't add another `<main>`. Protected pages go under `src/app/app/`.
+9. Start every competition task from `docs/QUICKSTART.md` and the prompts in `docs/prompts/`.

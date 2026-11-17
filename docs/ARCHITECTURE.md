@@ -51,31 +51,47 @@ Rules:
 
 ```
 src/
-  app/                    routes (pages + /api route handlers)
-    api/health/           liveness + DB check
-  components/ui/          design-system primitives (T2)
-  components/layout/      app shell: header, nav, footer (T2)
-  components/forms/       form field + error display (T2)
-  config/site.ts          app name + navigation (edit first in competition)
-  lib/                    isomorphic code (safe for client and server)
-    api/                  envelope types, server helpers, client fetcher
-    validation/           Zod schemas (common + per resource)
-    errors.ts env.ts utils.ts
-  server/                 server-only code
-    db/                   client, column helpers, schema/*, seed
-    auth/                 Better Auth config + session helpers (T1)
-    services/             business logic per resource
-    integrations/         external HTTP APIs, storage (T5, optional)
-  types/                  shared TS types (auth contract, ...)
-tests/                    test setup, helpers, e2e
-drizzle/                  generated SQL migrations (coordinator generates at integration)
-docs/                     these documents + task prompts
+  app/                      routes
+    (auth)/sign-in, sign-up public auth pages (T1)
+    app/                    protected area (/app/*): layout re-checks the session
+      items/                reference resource pages (T3)
+    api/auth/[...all]       Better Auth endpoints (T1)
+    api/health              liveness + DB check
+    api/items               reference resource API (T3)
+    api/uploads             optional uploads (T5, off unless STORAGE_DRIVER)
+    dev/ui                  component gallery (dev only)
+    layout.tsx              ToastProvider + AppShell(user, nav, SignOutButton)
+  components/ui|forms|layout design system, form helpers, app shell (T2)
+  components/items/         reference resource components (T3)
+  config/site.ts            app name + navigation (edit first in competition)
+  lib/                      isomorphic code (safe for client and server)
+    api/                    envelope types, server helpers, client fetcher
+    validation/             Zod schemas (common, auth, items)
+    auth-client.ts env.ts errors.ts utils.ts
+  proxy.ts                  optimistic /app redirect (cookie check only)
+  server/                   server-only code
+    auth/                   Better Auth config + session contract (T1)
+    db/                     client, columns, query-helpers, schema/*, seeds/*, seed.ts
+    services/               business logic + authorization per resource
+    integrations/http.ts    fetchJson for external APIs (T5)
+    security/rate-limit.ts  in-memory rate limiter (T5)
+    storage/                optional upload drivers: local (dev), s3 (T5)
+    logger.ts               structured logging (T5)
+  types/                    shared TS types (auth contract)
+scripts/new-resource.mjs    generate a resource from the reference slice
+tests/helpers|e2e|setup     test DB/session/request helpers, Playwright specs
+drizzle/                    committed SQL migrations
+docs/                       guides, contracts, prompts/, modules/, tasks/
 ```
 
 ## Key decisions log
 
-| Date       | Decision                                                                                                                 |
-| ---------- | ------------------------------------------------------------------------------------------------------------------------ |
-| 2026-11-17 | Stack above chosen. Cache Components off. SQLite/libSQL over Postgres for zero-setup local dev.                          |
-| 2026-11-17 | Response envelope `{ ok, data, meta? } / { ok:false, error }` fixed (docs/API_GUIDE.md).                                 |
-| 2026-11-17 | Task branches never commit migrations; the coordinator generates them after merging (avoids migration-number conflicts). |
+| Date       | Decision                                                                                                                    |
+| ---------- | --------------------------------------------------------------------------------------------------------------------------- |
+| 2026-11-17 | Stack above chosen. Cache Components off. SQLite/libSQL over Postgres for zero-setup local dev.                             |
+| 2026-11-17 | Response envelope `{ ok, data, meta? } / { ok:false, error }` fixed (docs/API_GUIDE.md).                                    |
+| 2026-11-17 | Task branches never commit migrations; the coordinator generates them after merging (avoids migration-number conflicts).    |
+| 2026-11-17 | Integration: root layout reads the session (all pages dynamic); `/app` layout re-checks auth; proxy only checks the cookie. |
+| 2026-11-17 | Better Auth tables stay singular (adapter requirement); demo user seeded via Better Auth's `hashPassword`.                  |
+| 2026-11-17 | No AWS SDK (own SigV4, verified against AWS's vector); no Dockerfile; uploads off by default.                               |
+| 2026-11-17 | `scripts/new-resource.mjs` generates resources from the reference slice; rehearsed on `sample/notes-app`.                   |

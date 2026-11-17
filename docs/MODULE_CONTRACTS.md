@@ -1,27 +1,27 @@
 # Module Contracts
 
-These interfaces are **frozen** for parallel work. To change one, ask the coordinator, who updates this file first.
+**Status 2026-11-17: every contract below is implemented and tested on `main`.** These interfaces are **frozen** for parallel work. To change one, ask the coordinator, who updates this file first.
 
 ## Capability classification
 
-| #   | Capability                                                                | Class                                                                | Module                                   |
-| --- | ------------------------------------------------------------------------- | -------------------------------------------------------------------- | ---------------------------------------- |
-| 1   | Project setup, config, scripts, env validation                            | **Core**                                                             | Stage 1 (done)                           |
-| 2   | Frontend routing, app shell, error/404/loading pages                      | **Core**                                                             | T2                                       |
-| 3   | Design system + reusable UI components                                    | **Core**                                                             | T2                                       |
-| 4   | Backend/API infrastructure (envelope, handler wrapper, client fetcher)    | **Core**                                                             | Stage 1 (done)                           |
-| 5   | DB connection, column conventions, migrations, seed runner                | **Core**                                                             | Stage 1 (done)                           |
-| 6   | Authentication (email+password) and role-based authorization              | **Core**                                                             | T1                                       |
-| 7   | Forms, validation, error display                                          | **Core**                                                             | Stage 1 (schemas) + T2 (form components) |
-| 8   | Search, filter, sort, pagination pattern (reference resource)             | **Core**                                                             | T3                                       |
-| 9a  | External HTTP API client pattern (timeout, retry, Zod-parsed)             | **Core**                                                             | T5                                       |
-| 9b  | File uploads/storage (local disk in dev, S3-compatible in prod)           | **Optional**, off by default                                         | T5                                       |
-| 10  | Security defaults: headers, input validation, authz checks, rate limiting | **Core**                                                             | Stage 1 + T1 + T5                        |
-| 11  | Testing: Vitest unit/integration, Playwright E2E, CI                      | **Core**                                                             | Stage 1 + T4                             |
-| 12  | Deployment config + documentation                                         | **Core**                                                             | T5                                       |
-| —   | OAuth/social login, email verification, password reset emails             | **Optional**: documented recipe, not built                           | T1 docs                                  |
-| —   | Realtime (websockets/SSE), background jobs                                | **Optional**: recipe only if time allows                             | —                                        |
-| —   | AI/LLM, maps, payments, i18n, analytics dashboards, multi-tenancy         | **Not included** (domain-specific; add only if the problem needs it) | —                                        |
+| #   | Capability                                                                | Class                                                                | Module                                     |
+| --- | ------------------------------------------------------------------------- | -------------------------------------------------------------------- | ------------------------------------------ |
+| 1   | Project setup, config, scripts, env validation                            | **Core**                                                             | Stage 1 (done)                             |
+| 2   | Frontend routing, app shell, error/404/loading pages                      | **Core**                                                             | T2 ✅                                      |
+| 3   | Design system + reusable UI components                                    | **Core**                                                             | T2 ✅                                      |
+| 4   | Backend/API infrastructure (envelope, handler wrapper, client fetcher)    | **Core**                                                             | Stage 1 (done)                             |
+| 5   | DB connection, column conventions, migrations, seed runner                | **Core**                                                             | Stage 1 (done)                             |
+| 6   | Authentication (email+password) and role-based authorization              | **Core**                                                             | T1 ✅                                      |
+| 7   | Forms, validation, error display                                          | **Core**                                                             | Stage 1 + T2 ✅                            |
+| 8   | Search, filter, sort, pagination pattern (reference resource)             | **Core**                                                             | T3 ✅                                      |
+| 9a  | External HTTP API client pattern (timeout, retry, Zod-parsed)             | **Core**                                                             | T5 ✅                                      |
+| 9b  | File uploads/storage (local disk in dev, S3-compatible in prod)           | **Optional**, off by default                                         | T5 ✅                                      |
+| 10  | Security defaults: headers, input validation, authz checks, rate limiting | **Core**                                                             | Stage 1 + T1 + T5 ✅                       |
+| 11  | Testing: Vitest unit/integration, Playwright E2E, CI                      | **Core**                                                             | Stage 1 + T4 ✅ (CI not yet run on GitHub) |
+| 12  | Deployment config + documentation                                         | **Core**                                                             | T5 ✅                                      |
+| —   | OAuth/social login, email verification, password reset emails             | **Optional**: documented recipe, not built                           | T1 docs                                    |
+| —   | Realtime (websockets/SSE), background jobs                                | **Optional**: recipe only if time allows                             | —                                          |
+| —   | AI/LLM, maps, payments, i18n, analytics dashboards, multi-tenancy         | **Not included** (domain-specific; add only if the problem needs it) | —                                          |
 
 ## Shared contracts (already implemented, Stage 1)
 
@@ -50,7 +50,7 @@ requireRole(role: Role): Promise<SessionUser>   // 401 if signed out, 403 if rol
 
 `src/lib/auth-client.ts` (client): exports `authClient` (Better Auth React client) plus `signIn`, `signUp`, `signOut`, `useSession`.
 
-Routes: `/sign-in`, `/sign-up` (public). After sign-in, redirect to the `?next=` param if it is a **relative** path, else `/`. `src/proxy.ts` does only an _optimistic_ redirect to `/sign-in?next=...` for paths under `/app` (protected area) when no session cookie exists. Real checks happen in services and handlers.
+Routes: `/sign-in`, `/sign-up` (public). After sign-in, redirect to the `?next=` param if it is a **relative** path, else `/app`. `src/proxy.ts` does only an _optimistic_ redirect to `/sign-in?next=...` for paths under `/app` (protected area) when no session cookie exists. Real checks happen in services and handlers.
 
 Users table: Better Auth's `user` table plus `role` (`"user" | "admin"`, default `"user"`, **not settable by sign-up input**).
 
@@ -70,6 +70,18 @@ Users table: Better Auth's `user` table plus `role` (`"user" | "admin"`, default
 - `src/server/integrations/http.ts`: `fetchJson(url, { schema, timeoutMs=10000, retries=2, headers })` → parsed data or throws `AppError("INTERNAL_ERROR")` with the upstream error logged.
 - `src/server/storage/*`: `StorageDriver { put(key, bytes, contentType), getUrl(key), delete(key) }` with a `local` driver (writes to `./uploads`, dev only) and an `s3` driver (S3-compatible). Selected by `STORAGE_DRIVER` env var. Upload route disabled unless `STORAGE_DRIVER` is set.
 - `src/server/security/rate-limit.ts`: `rateLimit({ key, limit, windowMs })` (in-memory; documented as per-instance only).
+
+## Contracts added during completion (implemented)
+
+| Contract            | File                                           | Notes                                                                                                                          |
+| ------------------- | ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| Logger              | `src/server/logger.ts`                         | `logger.debug/info/warn/error(message, context)`; JSON lines in production; `LOG_LEVEL`. Used by `toErrorResponse` and health. |
+| Query helpers       | `src/server/db/query-helpers.ts`               | `escapeLike`, `containsInsensitive`, `orderByFrom`, `pageWindow` (replaces the planned `paginate`).                            |
+| Storage             | `src/server/storage`                           | `getStorage(): StorageDriver                                                                                                   | null`; `local`refuses production; keys must match`UPLOAD_KEY_PATTERN`. |
+| Test helpers        | `tests/helpers/{db,auth,request}.ts`           | `setupTestDb/resetTestDb`, `sessionModuleMock/mockSession/makeUser`, `callRoute/jsonRequest`. Alias `@tests/*`.                |
+| Demo data           | `src/server/db/seeds/demo-user.ts`             | `ensureDemoUser(db)` → id of `demo@example.com` (password `demo-password-123`).                                                |
+| Resource generator  | `scripts/new-resource.mjs`                     | `npm run new-resource -- <singular> <plural>`.                                                                                 |
+| UI page conventions | `src/app/layout.tsx`, `src/app/app/layout.tsx` | Pages render inside AppShell's `<main>`; never add another `<main>`. Protected pages live under `src/app/app/`.                |
 
 ## Naming and code conventions
 
