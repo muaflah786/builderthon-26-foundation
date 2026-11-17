@@ -53,3 +53,6 @@ next-env.d.ts
 /test-results/
 /playwright-report/
 /playwright/.cache/
+
+# local uploads (STORAGE_DRIVER=local)
+/uploads/
